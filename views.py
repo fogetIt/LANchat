@@ -45,7 +45,42 @@ class Message(object):
         return cls.create_message(sender="system", title="error", error_text=error_text)
 
 
-class Views(Message):
+class Utils(object):
+    secret_key = "zdd.qwert"
+
+    @classmethod
+    def make_password(cls, password):
+        m = hashlib.md5()
+        m.update(cls.secret_key)
+        m.update(password)
+        return m.hexdigest()
+
+    @classmethod
+    def get_user_password(cls, name):
+        with open("user_password.json", "r") as reader:
+            _dict = json.loads(reader.read())
+            return _dict.get(name)
+
+    @classmethod
+    def add_user_password(cls, name, password):
+        if not cls.get_user_password(name):
+            password = cls.make_password(password)
+            with open("user_password.json", "r") as reader:
+                _dict = json.loads(reader.read())
+                _dict.update({name: password})
+                with open("password.json", "w") as writer:
+                    writer.write(json.dumps(_dict))
+                    return True
+        return False
+
+    @classmethod
+    def check_password(cls, name, password):
+        if cls.make_password(password) == cls.get_user_password(name):
+            return True
+        return False
+
+
+class Views(Message, Utils):
 
     def close_client(self, client_ip=None, client_socket=None):
         result = app.close_client(
@@ -53,6 +88,19 @@ class Views(Message):
         )
         if result:
             app.broadcast(self.user_list_message(app.user_list))
+
+    @app.route("register")
+    def register(self, client_ip=None, client_socket=None):
+        message_dict = app.parser(client_ip=client_ip, client_socket=client_socket)
+        if not message_dict:
+            return
+        name = message_dict.get("name")
+        password = message_dict.get("password")
+        if not self.add_user_password(name, password):
+            app.send_message(
+                self.error_message("user name has already existed!"),
+                receiver_socket=client_socket
+            )
 
     @app.route("login")
     def login(self, client_ip=None, client_socket=None):
@@ -79,18 +127,6 @@ class Views(Message):
         else:
             app.broadcast(self.user_list_message(app.user_list))
             app.logger.info("{client_ip} login successful".format(client_ip=client_ip))
-
-    @staticmethod
-    def check_password(name, password):
-        with open("user_pwd.json", "r") as reader:
-            _dict = json.loads(reader.read())
-            if name in _dict:
-                m = hashlib.md5()
-                m.update(name)
-                m.update(password)
-                if m.hexdigest() == _dict.get(name):
-                    return True
-            return False
 
     @app.route("logout")
     def logout(self, client_ip=None, client_socket=None):

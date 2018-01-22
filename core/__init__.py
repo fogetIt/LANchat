@@ -10,15 +10,15 @@ from .mixin import Single, RouterError
 class RouterMap(Single):
 
     def __init__(self):
-        self.map = dict()
+        self.router_map = dict()
 
     def add_rule(self, title, func):
-        if self.map.get(title):
+        if self.router_map.get(title):
             raise RouterError(title=title)
-        self.map.update({title: func})
+        self.router_map.update({title: func})
 
     def find_view(self, title):
-        return self.map.get(title)
+        return self.router_map.get(title)
 
 
 class App(ChartServer, RouterMap):

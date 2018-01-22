@@ -29,11 +29,11 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         ServerSocket.__init__(self)
         ClientStore.__init__(self)
 
-    def close_client(self, client_ip=None, client_socket=None):
-        client = self.get_client(client_ip=client_ip, client_socket=client_socket)
+    def close_client(self, user_name=None, client_socket=None):
+        client = self.get_client(user_name=user_name, client_socket=client_socket)
         if client:
             client.get("socket").close()
-            self.remove_client(client.get("ip"))
+            self.remove_client(user_name=client.get("user"), client_socket=client.get("socket"))
             return True
         else:
             self.logger.error("client socket is not exist")
@@ -56,7 +56,10 @@ class ChartServer(Logger, ServerSocket, ClientStore):
                 return True
             except Exception as e:
                 self.logger.error(e)
-                self.close_client(client_socket=receiver_client.get("socket"))
+                self.close_client(
+                    user_name=receiver_client.get("user"),
+                    client_socket=receiver_client.get("socket")
+                )
         return False
 
     def broadcast(self, message, sender="system", sender_socket=None):
@@ -74,15 +77,15 @@ class ChartServer(Logger, ServerSocket, ClientStore):
                         failed += 1
         return success, failed
 
-    def receive_message(self, client_ip=None, client_socket=None):
-        sender_client = self.get_client(client_ip=client_ip, client_socket=client_socket)
-        if sender_client:
+    def receive_message(self, user_name=None, client_socket=None):
+        receiver_client = self.get_client(user_name=user_name, client_socket=client_socket)
+        if receiver_client:
             try:
-                return sender_client.get("socket").recv(BUFFER_SIZE)
+                return receiver_client.get("socket").recv(BUFFER_SIZE)
             except Exception as e:
                 self.logger.error(e)
                 self.close_client(
-                    client_ip=sender_client.get("ip"),
-                    client_socket=sender_client.get("socket")
+                    user_name=receiver_client.get("user"),
+                    client_socket=receiver_client.get("socket")
                 )
         return False
