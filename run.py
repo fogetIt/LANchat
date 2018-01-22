@@ -3,7 +3,7 @@
 # @Last Modified time: 2017-11-21 11:07:43
 import select
 from threading import Thread
-from views import app
+from views import app, error_message
 
 
 PORT = 8888
@@ -17,7 +17,7 @@ class AcceptClient(Thread):
 
     def run(self):
         """
-        注册、登录、改密码
+        登录（免注册，但是要求用户计算机名不能重复）
         当有客户端连接时，把它加进 store
         """
         while True:
@@ -28,7 +28,12 @@ class AcceptClient(Thread):
             if message_dict:
                 view = app.find_view(message_dict.get("title"))
                 if not view:
-                    app.logger.error("title error")
+                    app.logger.error("message title error")
+                    app.send_message(
+                        error_message(ext_data="message title error!"),
+                        "loginer",
+                        client_socket
+                    )
                 else:
                     view(message_dict, client_socket)
 
@@ -50,10 +55,20 @@ class TransmitData(Thread):
                     sender = app.get_user(client_socket)
                     if not sender:
                         app.logger.error("{sender} is not online".format(sender=sender))
+                        app.send_message(
+                            error_message(ext_data="you are offline, please restart client!"),
+                            sender,
+                            client_socket
+                        )
                     else:
                         view = app.find_view(message_dict.get("title"))
                         if not view:
-                            app.logger.error("title error")
+                            app.logger.error("message title error")
+                            app.send_message(
+                                error_message(ext_data="message title error!"),
+                                sender,
+                                client_socket
+                            )
                         else:
                             view(message_dict, client_socket)
 
