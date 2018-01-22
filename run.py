@@ -17,35 +17,26 @@ class AcceptClient(Thread):
 
     def run(self):
         """
+        注册、登录、改密码
         当有客户端连接时，把它加进 store
         """
         while True:
             client_socket, client_address = app.server_socket.accept()
             client_ip = client_address[0]
             app.logger.info("{client_ip} is connected".format(client_ip=client_ip))
-            app.find_view("login")(client_socket)
+            message_dict = app.parser(client_socket)
+            if message_dict:
+                view = app.find_view(message_dict.get("title"))
+                if not view:
+                    app.logger.error("title error")
+                else:
+                    view(message_dict, client_socket)
 
 
 class TransmitData(Thread):
 
     def __init__(self):
         Thread.__init__(self)
-
-    @staticmethod
-    def handler(client_socket):
-        message_dict = app.parser(client_socket)
-        if not message_dict:
-            return
-        else:
-            sender = app.get_user(client_socket)
-            if not sender:
-                app.logger.error("{sender} is not online".format(sender=sender))
-            else:
-                view = app.find_view(message_dict.get("title"))
-                if not view:
-                    app.logger.error("title error")
-                else:
-                    view(message_dict, client_socket)
 
     def run(self):
         while True:
@@ -54,7 +45,17 @@ class TransmitData(Thread):
                 socket_list, [], [], SELECT_TIMEOUT
             )
             for client_socket in r_list:
-                self.handler(client_socket)
+                message_dict = app.parser(client_socket)
+                if message_dict:
+                    sender = app.get_user(client_socket)
+                    if not sender:
+                        app.logger.error("{sender} is not online".format(sender=sender))
+                    else:
+                        view = app.find_view(message_dict.get("title"))
+                        if not view:
+                            app.logger.error("title error")
+                        else:
+                            view(message_dict, client_socket)
 
 
 def main():
