@@ -27,8 +27,8 @@ class App(ChartServer, RouterMap):
         ChartServer.__init__(self)
         RouterMap.__init__(self)
 
-    def parser(self, client_ip=None, client_socket=None):
-        message = self.receive_message(client_ip=client_ip, client_socket=client_socket)
+    def parser(self, client_socket):
+        message = self.receive_message(client_socket=client_socket)
         if not message:
             self.logger.error("socket error")
         try:
@@ -37,11 +37,6 @@ class App(ChartServer, RouterMap):
             print(e)
             self.logger.error("message formatting error")
         return None
-
-    def parse_message(self, client_ip=None, client_socket=None):
-        message_dict = self.parser(client_ip=client_ip, client_socket=client_socket)
-        if not message_dict:
-            return
 
     def route(self, title):
         """

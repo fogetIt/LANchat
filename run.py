@@ -23,7 +23,7 @@ class AcceptClient(Thread):
             client_socket, client_address = app.server_socket.accept()
             client_ip = client_address[0]
             app.logger.info("{client_ip} is connected".format(client_ip=client_ip))
-            app.find_view("login")(client_ip=client_ip, client_socket=client_socket)
+            app.find_view("login")(client_socket)
 
 
 class TransmitData(Thread):
@@ -32,20 +32,20 @@ class TransmitData(Thread):
         Thread.__init__(self)
 
     @staticmethod
-    def handler(client_ip=None, client_socket=None):
-        message_dict = app.parser(client_ip=client_ip, client_socket=client_socket)
+    def handler(client_socket):
+        message_dict = app.parser(client_socket)
         if not message_dict:
             return
         else:
-            sender = app.get_user(client_ip=client_ip)
+            sender = app.get_user(client_socket)
             if not sender:
                 app.logger.error("{sender} is not online".format(sender=sender))
             else:
-                view = app.router().get(message_dict.get("title"))
+                view = app.find_view(message_dict.get("title"))
                 if not view:
                     app.logger.error("title error")
                 else:
-                    view(message_dict, client_ip=client_ip, client_socket=client_socket)
+                    view(message_dict, client_socket)
 
     def run(self):
         while True:
@@ -54,8 +54,7 @@ class TransmitData(Thread):
                 socket_list, [], [], SELECT_TIMEOUT
             )
             for client_socket in r_list:
-                client_ip = app.get_ip(client_socket=client_socket)
-                self.handler(client_ip=client_ip, client_socket=client_socket)
+                self.handler(client_socket)
 
 
 def main():

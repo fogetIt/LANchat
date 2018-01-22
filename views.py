@@ -3,46 +3,26 @@
 # @Last Modified time: 2018-01-20 14:59:46
 import json
 import hashlib
+from functools import partial
 from core import App
 
 
 app = App()
 
 
-class Message(object):
+def create_message(sender=None, title=None, ext_data=None):
+    if not sender or not title or not ext_data:
+        return None
+    message_dict = {"title": title, "sender": sender}
+    message_dict.update(ext_data)
+    return json.dumps(message_dict)
 
-    @classmethod
-    def create_message(cls, sender=None, title=None, **ext_data):
-        if not sender or not title:
-            return None
-        message_dict = {"title": title, "sender": sender}
-        if ext_data:
-            message_dict.update(ext_data)
-        return json.dumps(message_dict)
 
-    @classmethod
-    def private_message(cls, sender=None, text=None):
-        if not text:
-            return None
-        return cls.create_message(sender=sender, title="private", text=text)
-
-    @classmethod
-    def group_message(cls, sender=None, text=None):
-        if not text:
-            return None
-        return cls.create_message(sender=sender, title="group", text=text)
-
-    @classmethod
-    def user_list_message(cls, user_list=None):
-        if not user_list:
-            return None
-        return cls.create_message(sender="system", title="user_list", user_list=user_list)
-
-    @classmethod
-    def error_message(cls, error_text=None):
-        if not error_text:
-            return None
-        return cls.create_message(sender="system", title="error", error_text=error_text)
+group_message = partial(create_message, title="group")
+private_message = partial(create_message, title="private")
+user_list_message = partial(create_message, sender="system", ext_data=app.user_list)
+error_message = partial(create_message, sender="system", title="error")
+success_message = partial(create_message, sender="system", title="success")
 
 
 class Utils(object):
@@ -75,36 +55,42 @@ class Utils(object):
 
     @classmethod
     def check_password(cls, name, password):
-        if cls.make_password(password) == cls.get_user_password(name):
-            return True
+        if name:
+            if cls.make_password(password) == cls.get_user_password(name):
+                return True
         return False
 
 
-class Views(Message, Utils):
+class Views(Utils):
 
-    def close_client(self, client_ip=None, client_socket=None):
-        result = app.close_client(
-            client_ip=client_ip, client_socket=client_socket
-        )
+    def close_client(self, client_socket):
+        result = app.remove_client(client_socket=client_socket)
         if result:
-            app.broadcast(self.user_list_message(app.user_list))
+            app.broadcast(user_list_message())
 
     @app.route("register")
-    def register(self, client_ip=None, client_socket=None):
-        message_dict = app.parser(client_ip=client_ip, client_socket=client_socket)
+    def register(self, client_socket):
+        message_dict = app.parser(client_socket=client_socket)
         if not message_dict:
             return
         name = message_dict.get("name")
         password = message_dict.get("password")
         if not self.add_user_password(name, password):
             app.send_message(
-                self.error_message("user name has already existed!"),
-                receiver_socket=client_socket
+                error_message(ext_data="user name has already existed!"),
+                app.get_user(client_socket),
+                client_socket
+            )
+        else:
+            app.send_message(
+                success_message(ext_data="register successful"),
+                app.get_user(client_socket),
+                client_socket
             )
 
     @app.route("login")
-    def login(self, client_ip=None, client_socket=None):
-        message_dict = app.parser(client_ip=client_ip, client_socket=client_socket)
+    def login(self, client_socket):
+        message_dict = app.parser( client_socket=client_socket)
         if not message_dict:
             return
         if message_dict.get("title") != "login":
@@ -115,47 +101,46 @@ class Views(Message, Utils):
             if not self.check_password(name, password):
                 result = "name or password error"
             else:
-                result = app.add_client(
-                    user_name=name,
-                    client_ip=client_ip,
-                    client_socket=client_socket
-                )
-
-        if result:
-            app.logger.warning(result)
-            app.send_message(self.error_message(result))
-        else:
-            app.broadcast(self.user_list_message(app.user_list))
-            app.logger.info("{client_ip} login successful".format(client_ip=client_ip))
+                result = app.add_client(user_name=name, client_socket=client_socket)
+                if result:
+                    app.logger.warning(result)
+                    app.send_message(
+                        error_message(result),
+                        app.get_user(client_socket),
+                        receiver_socket=client_socket
+                    )
+                else:
+                    app.broadcast(user_list_message())
+                    app.logger.info("{name} login successful".format(name=name))
 
     @app.route("logout")
-    def logout(self, client_ip=None, client_socket=None):
-        message_dict = app.parser(client_ip=client_ip, client_socket=client_socket)
+    def logout(self, client_socket):
+        message_dict = app.parser(client_socket=client_socket)
         if not message_dict:
             return
-        self.close_client(client_ip=client_ip, client_socket=client_socket)
+        self.close_client(client_socket=client_socket)
 
     @app.route("private")
-    def private(self, client_ip=None, client_socket=None):
-        message_dict = app.parser(client_ip=client_ip, client_socket=client_socket)
+    def private(self, client_socket):
+        message_dict = app.parser(client_socket=client_socket)
         if not message_dict:
             return
-        sender_client = app.get_client(client_ip=client_ip, client_socket=client_socket)
-        text = message_dict.get("text")
+        ext_data = message_dict.get("ext_data")
         receiver = message_dict.get("receiver")
-        message = self.private_message(sender=sender_client.get("user"), text=text)
-        app.send_message(message, receiver=receiver)
+        app.send_message(
+            private_message(sender=app.get_user(client_socket), ext_data=ext_data),
+            receiver,
+            app.get_socket(receiver)
+        )
 
     @app.route("group")
-    def group(self, client_ip=None, client_socket=None):
-        message_dict = app.parser(client_ip=client_ip, client_socket=client_socket)
+    def group(self, client_socket):
+        message_dict = app.parser(client_socket=client_socket)
         if not message_dict:
             return
-        sender_client = app.get_client(client_ip=client_ip, client_socket=client_socket)
-        text = message_dict.get("text")
-        message = self.group_message(sender=sender_client.get("user"), text=text)
+        ext_data = message_dict.get("ext_data")
         app.broadcast(
-            message,
-            sender=sender_client.get("user"),
-            sender_socket=sender_client.get("socket")
+            group_message(sender=app.get_user(client_socket), ext_data=ext_data),
+            sender=app.get_user(client_socket),
+            sender_socket=client_socket
         )

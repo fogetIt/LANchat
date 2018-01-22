@@ -29,47 +29,29 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         ServerSocket.__init__(self)
         ClientStore.__init__(self)
 
-    def close_client(self, user_name=None, client_socket=None):
-        client = self.get_client(user_name=user_name, client_socket=client_socket)
-        if client:
-            client.get("socket").close()
-            self.remove_client(user_name=client.get("user"), client_socket=client.get("socket"))
-            return True
-        else:
-            self.logger.error("client socket is not exist")
-            return False
-
-    def send_message(self, message, receiver=None, receiver_socket=None):
-        receiver_client = self.get_client(user_name=receiver, client_socket=receiver_socket)
-        if not receiver_client:
-            self.logger.error("receiver is not exist")
-        elif not message:
+    def send_message(self, message, receiver, receiver_socket):
+        if not message:
             self.logger.error("message empty error")
         else:
             try:
-                receiver_client.get("socket").send(message)
+                receiver_socket.send(message)
                 self.logger.info(
-                    "send message to {receiver} success".format(
-                        receiver=receiver_client.get("user")
-                    )
+                    "send message to {receiver} success".format(receiver=receiver)
                 )
                 return True
             except Exception as e:
                 self.logger.error(e)
-                self.close_client(
-                    user_name=receiver_client.get("user"),
-                    client_socket=receiver_client.get("socket")
+                self.remove_client(
+                    user_name=receiver,
+                    client_socket=receiver_socket
                 )
         return False
 
     def broadcast(self, message, sender="system", sender_socket=None):
         success = failed = 0
-        sender_client = {} if sender == "system" else self.get_client(
-            user_name=sender, client_socket=sender_socket
-        )
-        if type(sender_client) is dict:
+        if sender == "system" or sender_socket:
             for tcp_socket in self.socket_iterator:
-                if tcp_socket != sender_client.get("socket"):
+                if tcp_socket != sender_socket:
                     result = self.send_message(message, receiver_socket=tcp_socket)
                     if result:
                         success += 1
@@ -77,15 +59,10 @@ class ChartServer(Logger, ServerSocket, ClientStore):
                         failed += 1
         return success, failed
 
-    def receive_message(self, user_name=None, client_socket=None):
-        receiver_client = self.get_client(user_name=user_name, client_socket=client_socket)
-        if receiver_client:
-            try:
-                return receiver_client.get("socket").recv(BUFFER_SIZE)
-            except Exception as e:
-                self.logger.error(e)
-                self.close_client(
-                    user_name=receiver_client.get("user"),
-                    client_socket=receiver_client.get("socket")
-                )
+    def receive_message(self, client_socket):
+        try:
+            return client_socket.recv(BUFFER_SIZE)
+        except Exception as e:
+            self.logger.error(e)
+            self.remove_client(client_socket=client_socket)
         return False

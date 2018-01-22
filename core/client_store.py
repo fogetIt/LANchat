@@ -10,32 +10,23 @@ class ClientStore(Single):
     def __init__(self):
         self.user_socket_dict = bidict()
 
-    def add_client(self, user_name=None, client_socket=None):
+    def add_client(self, user_name, client_socket):
         if user_name in self.user_socket_dict:
             return "{user_name} is already online".format(user_name=user_name)
         self.user_socket_dict.update({user_name: client_socket})
         return None
 
     def remove_client(self, user_name=None, client_socket=None):
-        self.user_socket_dict.pop(user_name)
-        self.user_socket_dict.inv.pop(client_socket)
+        self.user_socket_dict.pop(user_name, None)
+        self.user_socket_dict.inv.pop(client_socket, None)
 
-    def get_client(self, user_name=None, client_socket=None):
-        if not user_name:
-            user_name = self.get_user(client_socket=client_socket)
-        if not client_socket:
-            client_socket = self.get_socket(user_name=user_name)
-        if not client_socket:
-            return False
-        return {"user": user_name, "socket": client_socket}
-
-    def get_user(self, client_socket=None):
+    def get_user(self, client_socket):
         user_name = None
         if client_socket:
             user_name = self.user_socket_dict.inv.get(client_socket)
         return user_name
 
-    def get_socket(self, user_name=None):
+    def get_socket(self, user_name):
         client_socket = None
         if user_name:
             client_socket = self.user_socket_dict.get(user_name)
