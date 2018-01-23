@@ -18,6 +18,6 @@ python server.py
 ```
 
 ##### run client
-```
-sudo python client.pyw
+```shell
+pip install git+https://github.com/forgetIt/sc-client.git
 ```
