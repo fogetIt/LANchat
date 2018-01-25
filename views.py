@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-20 14:59:10
-# @Last Modified time: 2018-01-20 14:59:46
+# @Last Modified time: 2018-01-25 18:41:23
 import json
 from functools import partial
 from core import App
@@ -13,13 +13,14 @@ def create_message(sender=None, title=None, ext_data=None):
     if not sender or not title or not ext_data:
         return None
     message_dict = {"title": title, "sender": sender}
-    message_dict.update(ext_data)
+    message_dict.update(ext_data=ext_data)
     return json.dumps(message_dict)
 
 
 group_message = partial(create_message, title="group")
 private_message = partial(create_message, title="private")
-user_list_message = partial(create_message, sender="system", ext_data=app.user_list)
+user_list_message = partial(
+    create_message, sender="system", ext_data=app.user_list)
 error_message = partial(create_message, sender="system", title="error")
 
 
@@ -55,7 +56,8 @@ class Views(object):
         ext_data = message_dict.get("ext_data")
         receiver = message_dict.get("receiver")
         app.send_message(
-            private_message(sender=app.get_user(client_socket), ext_data=ext_data),
+            private_message(sender=app.get_user(
+                client_socket), ext_data=ext_data),
             receiver,
             app.get_socket(receiver)
         )
@@ -64,7 +66,8 @@ class Views(object):
     def group(self, message_dict, client_socket):
         ext_data = message_dict.get("ext_data")
         app.broadcast(
-            group_message(sender=app.get_user(client_socket), ext_data=ext_data),
+            group_message(sender=app.get_user(
+                client_socket), ext_data=ext_data),
             sender=app.get_user(client_socket),
             sender_socket=client_socket
         )
