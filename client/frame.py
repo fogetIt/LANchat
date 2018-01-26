@@ -25,6 +25,7 @@ class LeftSizer(Single):
         self.user_list_box.SetFont(FONT12)
         self.user_list_box.SetForegroundColour(COLOR_WHITE)
         self.user_list_box.SetBackgroundColour(COLOR_GREEN)
+        self.user_list_box.Insert("group", 0)
 
         self.left_sizer = wx.BoxSizer(wx.VERTICAL)
         self.left_sizer.Add(
@@ -104,7 +105,8 @@ class MainFrame(wx.Frame, Sizer):
     def __init__(self):
         pos = (300, 50)
         size = (800, 600)
-        super(MainFrame, self).__init__(
+        wx.Frame.__init__(
+            self,
             parent=None,
             id=-1,
             name="main",

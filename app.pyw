@@ -3,20 +3,49 @@
 # @Last Modified time: 2018-01-25 17:00:22
 import json
 from threading import Thread
+import wx
 from wx.lib.pubsub import pub
-from client.frame import wx, MainFrame
-from client import Client
+from client import Client, BUFFER_SIZE, MainFrame
 
 
-BUFFER_SIZE = 4096
+class MessageSender(Client):
+
+    @staticmethod
+    def create_message(title, receiver="", ext_data=None):
+        message_dict = {"title": title}
+        if receiver:
+            message_dict.update({"receiver": receiver})
+        if ext_data:
+            message_dict.update(ext_data)
+        return json.dumps(message_dict)
+
+    def login(self, host, port):
+        self.client.connect((host, port))
+        self.client.send(
+            self.create_message("login", ext_data={"name": self.user_name})
+        )
+
+    def logout(self):
+        self.client.send(self.create_message("logout"))
+        self.client.close()
+
+    def private(self, value, receiver):
+        self.client.send(
+            self.create_message("private", receiver=receiver, ext_data={"ext_data": value})
+        )
+
+    def group(self, value):
+        self.client.send(
+            self.create_message("group", ext_data={"ext_data": value})
+        )
 
 
-class MainWindow(Client, MainFrame):
+class MainWindow(MainFrame, MessageSender):
     app = wx.App()
 
     def __init__(self):
-        Client.__init__(self)
         MainFrame.__init__(self)
+        MessageSender.__init__(self)
         self.choiced_user = u""
 
         self.Bind(wx.EVT_CLOSE, self.close_window_event)
@@ -75,13 +104,7 @@ class GUI(Thread, MainWindow):
         MainWindow.app.MainLoop()
 
 
-class REPL(Thread, Client, MainWindow):
-
-    def __init__(self, window):
-        Thread.__init__(self)
-        Client.__init__(self)
-        # self.window = window
-        self.window = MainWindow()
+class MessageHandler(Client, MainWindow):
 
     def private_handler(self, message_dict):
         sender = message_dict.get("sender")
@@ -108,6 +131,16 @@ class REPL(Thread, Client, MainWindow):
                     self.window.user_list_box.Insert,
                     sender + u"♥", n
                 )
+
+
+
+class REPL(Thread, Client, MainWindow):
+
+    def __init__(self, window):
+        Thread.__init__(self)
+        Client.__init__(self)
+        # self.window = window
+        self.window = MainWindow()
 
     def run(self):
         while True:
