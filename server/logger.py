@@ -47,7 +47,7 @@ logging.setLoggerClass(ColoredLogger)
 if __name__ == "__main__":
     logging.config.fileConfig("logger.conf")
 else:
-    logging.config.fileConfig("core/logger.conf")
+    logging.config.fileConfig("server/logger.conf")
 
 
 class Logger(Single):

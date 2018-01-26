@@ -1,25 +1,12 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-20 17:14:06
 # @Last Modified time: 2018-01-20 17:14:28
-import socket
-from .mixin import Single
+import json
+from server import BUFFER_SIZE
 from .logger import Logger
-from .client_store import ClientStore
-
-
-PORT = 8888
-BUFFER_SIZE = 4096
-LISTEN_NUMBER = 15
-SERVER_TIMEOUT = None
-
-
-class ServerSocket(Single):
-
-    def __init__(self):
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.settimeout(SERVER_TIMEOUT)
-        self.server_socket.bind(("0.0.0.0", PORT))
-        self.server_socket.listen(LISTEN_NUMBER)
+from .mixin import (
+    ServerSocket, ClientStore, RouterMap
+)
 
 
 class ChartServer(Logger, ServerSocket, ClientStore):
@@ -66,3 +53,31 @@ class ChartServer(Logger, ServerSocket, ClientStore):
             self.logger.error(e)
             self.remove_client(client_socket=client_socket)
         return False
+
+
+class App(ChartServer, RouterMap):
+
+    def __init__(self):
+        ChartServer.__init__(self)
+        RouterMap.__init__(self)
+
+    def parser(self, client_socket):
+        message = self.receive_message(client_socket=client_socket)
+        if not message:
+            self.logger.error("socket error")
+        try:
+            return json.loads(message)
+        except Exception as e:
+            print(e)
+            self.logger.error("message formatting error")
+        return None
+
+    def route(self, title):
+        """
+        不修改被装饰的函数的行为，只是想获得它的引用
+        参照 Flask.route
+        """
+        def decorator(func):
+            self.add_rule(title, func)
+            return func
+        return decorator

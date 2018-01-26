@@ -3,11 +3,7 @@
 # @Last Modified time: 2017-11-21 11:07:43
 import select
 from threading import Thread
-from views import app, error_message
-
-
-PORT = 8888
-SELECT_TIMEOUT = 3
+from server import app, error_message, PORT, SELECT_TIMEOUT
 
 
 class AcceptClient(Thread):

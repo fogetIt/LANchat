@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-19 10:54:33
 # @Last Modified time: 2018-01-19 10:55:27
+import types
+import socket
 from bidict import bidict
-from .mixin import Single
+from server import (
+    Single, RouterError,
+    PORT, LISTEN_NUMBER, SERVER_TIMEOUT
+)
 
 
 class ClientStore(Single):
@@ -39,3 +44,30 @@ class ClientStore(Single):
     @property
     def user_list(self):
         return self.user_socket_dict.keys()
+
+
+class ServerSocket(Single):
+
+    def __init__(self):
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket.settimeout(SERVER_TIMEOUT)
+        self.server_socket.bind(("0.0.0.0", PORT))
+        self.server_socket.listen(LISTEN_NUMBER)
+
+
+class RouterMap(Single):
+
+    def __init__(self):
+        self.router_map = dict()
+
+    def add_rule(self, title, func):
+        if not title:
+            raise RouterError(err="title empty")
+        elif not isinstance(func, types.FunctionType):
+            raise RouterError(err="view func error")
+        elif self.router_map.get(title):
+            raise RouterError(err="router {title} has existed".format(title=title))
+        self.router_map.update({title: func})
+
+    def find_view(self, title):
+        return self.router_map.get(title)

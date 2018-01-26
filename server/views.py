@@ -3,7 +3,7 @@
 # @Last Modified time: 2018-01-25 18:41:23
 import json
 from functools import partial
-from core import App
+from .app import App
 
 
 app = App()
@@ -56,8 +56,9 @@ class Views(object):
         ext_data = message_dict.get("ext_data")
         receiver = message_dict.get("receiver")
         app.send_message(
-            private_message(sender=app.get_user(
-                client_socket), ext_data=ext_data),
+            private_message(
+                sender=app.get_user(client_socket), ext_data=ext_data
+            ),
             receiver,
             app.get_socket(receiver)
         )
@@ -66,8 +67,9 @@ class Views(object):
     def group(self, message_dict, client_socket):
         ext_data = message_dict.get("ext_data")
         app.broadcast(
-            group_message(sender=app.get_user(
-                client_socket), ext_data=ext_data),
+            group_message(
+                sender=app.get_user(client_socket), ext_data=ext_data
+            ),
             sender=app.get_user(client_socket),
             sender_socket=client_socket
         )
