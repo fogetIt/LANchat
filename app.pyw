@@ -3,94 +3,7 @@
 # @Last Modified time: 2018-01-25 17:00:22
 import json
 from threading import Thread
-import wx
-from wx.lib.pubsub import pub
-from client import Client, BUFFER_SIZE, MainFrame
-
-
-class MessageSender(Client):
-
-    @staticmethod
-    def create_message(title, receiver="", ext_data=None):
-        message_dict = {"title": title}
-        if receiver:
-            message_dict.update({"receiver": receiver})
-        if ext_data:
-            message_dict.update(ext_data)
-        return json.dumps(message_dict)
-
-    def login(self, host, port):
-        self.client.connect((host, port))
-        self.client.send(
-            self.create_message("login", ext_data={"name": self.user_name})
-        )
-
-    def logout(self):
-        self.client.send(self.create_message("logout"))
-        self.client.close()
-
-    def private(self, value, receiver):
-        self.client.send(
-            self.create_message("private", receiver=receiver, ext_data={"ext_data": value})
-        )
-
-    def group(self, value):
-        self.client.send(
-            self.create_message("group", ext_data={"ext_data": value})
-        )
-
-
-class MainWindow(MainFrame, MessageSender):
-    app = wx.App()
-
-    def __init__(self):
-        MainFrame.__init__(self)
-        MessageSender.__init__(self)
-        self.choiced_user = u""
-
-        self.Bind(wx.EVT_CLOSE, self.close_window_event)
-        self.user_list_box.Bind(wx.EVT_LEFT_UP, self.choose_user_event)
-        self.send_button.Bind(wx.EVT_BUTTON, self.send_message_event)
-
-        pub.subscribe(self.pub_sender, "pub_sender")
-        pub.subscribe(self.pub_user_list, "pub_user_list")
-
-    def close_window_event(self, e=None):
-        self.logout()
-        MainWindow.app.Destroy()  # TODO  noticing
-        wx.Exit()                 # TODO  better than exit(0)
-
-    def send_message_event(self, e):
-        value = self.input_field.GetValue().strip()
-        if not self.choiced_user:
-            self.show_tip(u"未选择用户")
-        elif not value:
-            self.show_tip(u"发送信息为空")
-        elif self.choiced_user == "group":
-            if self.user_list_box.GetItems():
-                self.group(value)
-                self.create_chat_record("group", value)
-                self.show_chat_records(self.choiced_user)
-            else:
-                self.show_tip(u"群聊为空")
-        else:
-            self.private(value, self.choiced_user)
-            self.create_chat_record(self.choiced_user, value)
-            self.show_chat_records(self.choiced_user)
-
-    def choose_user_event(self, e):
-        if self.user_list_box.GetItems():
-            self.choiced_user = self.user_list_box.GetStringSelection()
-            n = self.user_list_box.GetSelection()
-            if n != -1:
-                self.user_name_text.SetLabel(self.choiced_user)
-                self.show_chat_records(self.choiced_user)
-
-    def pub_sender(self, sender):
-        self.find_sender = self.user_list_box.FindString(sender)
-
-    def pub_user_list(self):
-        self.user_list = [user for user in self.user_list_box.GetItems()]
+from client import BUFFER_SIZE, MainWindow, MessageHandler
 
 
 class GUI(Thread, MainWindow):
@@ -104,43 +17,12 @@ class GUI(Thread, MainWindow):
         MainWindow.app.MainLoop()
 
 
-class MessageHandler(Client, MainWindow):
-
-    def private_handler(self, message_dict):
-        sender = message_dict.get("sender")
-        choiced_user = self.window.choiced_user
-        wx.CallAfter(
-            self.window.add_message_store,
-            sender,
-            message_dict.get("ext_data")
-        )
-        if choiced_user == sender:
-            wx.CallAfter(
-                self.window.show_chat_records,
-                choiced_user
-            )
-        else:
-            pub.sendMessage("find_sender", sender=sender)
-            n = self.window.find_sender
-            if n != -1:
-                wx.CallAfter(
-                    self.window.user_list_box.Delete,
-                    n
-                )
-                wx.CallAfter(
-                    self.window.user_list_box.Insert,
-                    sender + u"♥", n
-                )
-
-
-
-class REPL(Thread, Client, MainWindow):
+class REPL(Thread, MessageHandler):
 
     def __init__(self, window):
         Thread.__init__(self)
-        Client.__init__(self)
-        # self.window = window
-        self.window = MainWindow()
+        MessageHandler.__init__(self)
+        self.window = window
 
     def run(self):
         while True:
@@ -156,3 +38,16 @@ class REPL(Thread, Client, MainWindow):
             except Exception as e:
                 self.window.show_tip(e)
                 break
+
+
+def main(host, port):
+    t1 = GUI(host, port)
+    t2 = REPL(t1)
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+
+
+if __name__ == '__main__':
+    main("", 8888)

@@ -27,18 +27,30 @@ class MessageStore(Single):
 
     def __init__(self):
         self.max_size = 100
-        self.message_store = {}
+        self.user_record_dict = {}
+        self.unread_dict = {}
+        self.selected_user = u""
+        self.user_list = []
 
-    def add_message_store(self, name, record):
-        message_list = self.message_store.get(name)
-        if not message_list:
-            self.message_store.update({name: []})
-        elif len(message_list) >= self.max_size:
-            message_list.pop(0)
-        message_list.append(record)
+    def add_record(self, user, record, is_selected_user=False):
+        if not is_selected_user:
+            unread_num = int(self.unread_dict.get(user, 0))
+            self.unread_dict.update({user: unread_num + 1})
+        record_list = self.user_record_dict.get(user)
+        if not record_list:
+            self.user_record_dict.update({user: []})
+        elif len(record_list) >= self.max_size:
+            record_list.pop(0)
+        record_list.append(record)
 
-    def reduce_message_store(self, name):
-        self.message_store.pop(name)
+    def reduce_record(self, user):
+        if not self.unread_dict.get(user):
+            self.user_record_dict.pop(user)
+
+    def get_record(self, user):
+        unread_num = int(self.unread_dict.get(user, 0))
+        record_list = self.user_record_dict.get(user)
+        return unread_num, record_list
 
 
 class MessageSizer(MessageStore):
@@ -51,7 +63,7 @@ class MessageSizer(MessageStore):
         )
         self.message_panel.SetSizer(self.message_sizer)
 
-    def create_chat_record(self, name, value, is_self=True):
+    def create_chat_record(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.message_panel, value=value)
         record.SetFont(FONT12)
         if is_self:
@@ -63,17 +75,20 @@ class MessageSizer(MessageStore):
                 record, proportion=0, border=150, flag=wx.EXPAND | wx.RIGHT
             )
         record.Hide()
-        self.add_message_store(name, record)
+        is_selected_user = user == self.selected_user
+        self.add_record(user, record, is_selected_user)
 
-    def show_chat_records(self, name):
+    def show_chat_records(self, user):
         """
         销毁 message_panel 的所有子对象
         self.message_panel.RemoveChild() 销毁后的子对象，不能再 ADD()
         """
         self.message_panel.DestroyChildren()
         self.message_sizer.Clear(deleteWindows=False)
-        message_list = self.message_store.get(name)
-        if message_list:
-            for i in message_list:
+        unread_num, record_list = self.get_record(user)
+        if record_list:
+            for i in record_list:
                 i.Show()
             self.message_panel.SetupScrolling()
+        if user not in self.user_list:
+            pass

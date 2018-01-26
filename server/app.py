@@ -16,10 +16,11 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         ServerSocket.__init__(self)
         ClientStore.__init__(self)
 
-    def send_message(self, message, receiver, receiver_socket):
+    def send_message(self, message, receiver_socket, receiver=None):
         if not message:
             self.logger.error("message empty error")
         else:
+            receiver = self.get_user(receiver_socket) if not receiver else receiver
             try:
                 receiver_socket.send(message)
                 self.logger.info(
@@ -39,7 +40,7 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         if sender == "system" or sender_socket:
             for tcp_socket in self.socket_iterator:
                 if tcp_socket != sender_socket:
-                    result = self.send_message(message, receiver_socket=tcp_socket)
+                    result = self.send_message(message, tcp_socket)
                     if result:
                         success += 1
                     else:

@@ -48,14 +48,14 @@ wxPython
     GUI 操作必须发生在 main thread 或者 wx.App.MainLoop() thread
     所以，无法通过共用 class object 来更新 GUI
 python threading
-    只能利用到一个计算机核（只能同时干一件事）
-    所以，如果线程工作时间过长，容易造成 GUI 界面卡死
+    只能利用到一个计算机核（同一时刻干一件事） --> 如果线程工作时间过长，容易造成 GUI 卡死
 python multiprocessing
     非 GUI 进程，无法更新 GUI
 
-solution
+solution1
     wx.CallAfter(guiObj.func, arg1, arg2, ...)          非 GUI 线程调用 GUI 线程
-
+solution2
+    from wx.lib.pubsub import pub
     wx.lib.pubsub.pub.subscribe(callback, topicName)    发布订阅事件(gui thread)
     wx.lib.pubsub.pub.sendMessage(topicName, **kwargs)  发送全局消息，启动事件(other thread)
 ```

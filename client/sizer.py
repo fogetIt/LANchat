@@ -98,34 +98,3 @@ class Sizer(LeftSizer, RightSizer):
             self.right_sizer, proportion=7.5, border=5, flag=wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM
         )
         panel.SetSizer(self.main_sizer)
-
-
-class MainFrame(wx.Frame, Sizer):
-
-    def __init__(self):
-        pos = (300, 50)
-        size = (800, 600)
-        wx.Frame.__init__(
-            self,
-            parent=None,
-            id=-1,
-            name="main",
-            title="simple chat client",
-            pos=pos,
-            size=size,
-            style=wx.DEFAULT_FRAME_STYLE
-        )
-        self.SetMaxSize(size)
-        self.SetMinSize(size)
-        self.panel = wx.Panel(parent=self, id=1)
-        Sizer.__init__(self, self.panel)
-        self.Show(True)  # TODO == MainFrame().Show()
-
-    def show_tip(self, msg):
-        self.tip = wx.MessageDialog(
-            parent=None,
-            message="\n%s" % msg,
-            pos=(60, 25),
-            style=wx.ICON_EXCLAMATION | wx.OK_DEFAULT
-        )
-        self.tip.ShowModal()

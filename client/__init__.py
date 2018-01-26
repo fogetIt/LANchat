@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-23 15:26:09
 # @Last Modified time: 2018-01-23 15:26:21
-import socket
 import wx
 
 
@@ -32,12 +31,5 @@ class Single(object):
             cls._instance = super(Single, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
-
-class Client(Single):
-
-    def __init__(self):
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.setblocking(1)
-        self.user_name = socket.gethostname()
-
-from .frame import MainFrame
+from .window import MainWindow
+from .views import MessageHandler

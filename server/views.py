@@ -33,19 +33,16 @@ class Views(object):
 
     @app.route("login")
     def login(self, message_dict, client_socket):
-        result = app.add_client(
-            user_name=message_dict.get("name"), client_socket=client_socket
-        )
+        user_name = message_dict.get("name")
+        result = app.add_client(user_name=user_name, client_socket=client_socket)
         if result:
             app.logger.warning(result)
             app.send_message(
-                error_message(ext_data=result),
-                app.get_user(client_socket),
-                receiver_socket=client_socket
+                error_message(ext_data=result), client_socket
             )
         else:
             app.broadcast(user_list_message())
-            app.logger.info("{name} login successful".format(name=name))
+            app.logger.info("{user_name} login successful".format(user_name=user_name))
 
     @app.route("logout")
     def logout(self, message_dict, client_socket):
@@ -54,22 +51,16 @@ class Views(object):
     @app.route("private")
     def private(self, message_dict, client_socket):
         ext_data = message_dict.get("ext_data")
-        receiver = message_dict.get("receiver")
         app.send_message(
-            private_message(
-                sender=app.get_user(client_socket), ext_data=ext_data
-            ),
-            receiver,
-            app.get_socket(receiver)
+            private_message(sender=app.get_user(client_socket), ext_data=ext_data),
+            app.get_socket(message_dict.get("receiver"))
         )
 
     @app.route("group")
     def group(self, message_dict, client_socket):
         ext_data = message_dict.get("ext_data")
         app.broadcast(
-            group_message(
-                sender=app.get_user(client_socket), ext_data=ext_data
-            ),
-            sender=app.get_user(client_socket),
-            sender_socket=client_socket
+            group_message(sender=app.get_user(client_socket), ext_data=ext_data),
+            app.get_user(client_socket),
+            client_socket
         )
