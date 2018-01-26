@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Last Modified time: 2018-01-24 21:21:12
-import wx
 import wx.lib.scrolledpanel as scrolled
-from client import Single, FONT12
+from client import wx, Single, FONT12
 
 
 class StaticTextCtrl(wx.TextCtrl):
@@ -23,7 +22,7 @@ class StaticTextCtrl(wx.TextCtrl):
             self.SetBackgroundColour(parent.BackgroundColour)
 
 
-class MessageStore(Single):
+class RecordStore(Single):
 
     def __init__(self):
         self.max_size = 100
@@ -32,20 +31,25 @@ class MessageStore(Single):
         self.selected_user = u""
         self.user_list = []
 
-    def add_record(self, user, record, is_selected_user=False):
-        if not is_selected_user:
+    def add_record(self, user, record):
+        if not user == self.selected_user:
             unread_num = int(self.unread_dict.get(user, 0))
             self.unread_dict.update({user: unread_num + 1})
         record_list = self.user_record_dict.get(user)
         if not record_list:
             self.user_record_dict.update({user: []})
         elif len(record_list) >= self.max_size:
-            record_list.pop(0)
+            record_list.pop(0, None)
         record_list.append(record)
 
     def reduce_record(self, user):
+        if user == self.selected_user:
+            if user not in self.user_list:
+                self.unread_dict.pop(user, None)
+            else:
+                self.unread_dict.update({user: 0})
         if not self.unread_dict.get(user):
-            self.user_record_dict.pop(user)
+            self.user_record_dict.pop(user, None)
 
     def get_record(self, user):
         unread_num = int(self.unread_dict.get(user, 0))
@@ -53,42 +57,44 @@ class MessageStore(Single):
         return unread_num, record_list
 
 
-class MessageSizer(MessageStore):
+class RecordPanel(RecordStore):
 
     def __init__(self, panel):
-        MessageStore.__init__(self)
-        self.message_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.message_panel = scrolled.ScrolledPanel(
+        super(RecordPanel, self).__init__()
+        self.record_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.record_panel = scrolled.ScrolledPanel(
             parent=panel, id=30, style=wx.SIMPLE_BORDER
         )
-        self.message_panel.SetSizer(self.message_sizer)
+        self.record_panel.SetSizer(self.record_sizer)
 
     def create_chat_record(self, user, value, is_self=True):
-        record = StaticTextCtrl(parent=self.message_panel, value=value)
+        record = StaticTextCtrl(parent=self.record_panel, value=value)
         record.SetFont(FONT12)
         if is_self:
-            self.message_sizer.Add(
+            self.record_sizer.Add(
                 record, proportion=0, border=150, flag=wx.EXPAND | wx.LEFT
             )
         else:
-            self.message_sizer.Add(
+            self.record_sizer.Add(
                 record, proportion=0, border=150, flag=wx.EXPAND | wx.RIGHT
             )
         record.Hide()
-        is_selected_user = user == self.selected_user
-        self.add_record(user, record, is_selected_user)
+        self.add_record(user, record)
 
-    def show_chat_records(self, user):
+    def refresh_chat_records(self, user):
         """
-        销毁 message_panel 的所有子对象
-        self.message_panel.RemoveChild() 销毁后的子对象，不能再 ADD()
+        Destroy record_panel's sub object, and try to reduce record.
+        self.record_panel.RemoveChild() 销毁后的子对象，不能再 ADD()
         """
-        self.message_panel.DestroyChildren()
-        self.message_sizer.Clear(deleteWindows=False)
+        self.record_panel.DestroyChildren()
+        self.record_sizer.Clear(deleteWindows=False)
         unread_num, record_list = self.get_record(user)
         if record_list:
             for i in record_list:
                 i.Show()
-            self.message_panel.SetupScrolling()
-        if user not in self.user_list:
-            pass
+            self.record_panel.SetupScrolling()
+        self.reduce_record(user)
+
+    def refresh_unread_tip(self):
+        # TODO
+        pass

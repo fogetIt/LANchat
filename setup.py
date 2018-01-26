@@ -28,7 +28,7 @@ setup(
     description="client for simple-chat",
     url="https://github.com/forgetIt/simple-chat.git",
     packages=["client"],
-    install_requires=[],
+    install_requires=["bidict==0.13.1"],
     platforms=["ubuntu"],
     author="zdd",
     author_email = "2271404280@qq.com",

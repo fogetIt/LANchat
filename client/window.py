@@ -46,12 +46,21 @@ class MainWindow(MainFrame, MessageSender):
 
         self.Bind(wx.EVT_CLOSE, self.close_window_event)
         self.user_list_box.Bind(wx.EVT_LEFT_UP, self.choose_user_event)
+        self.notice_button.Bind(wx.EVT_BUTTON, self.get_notice_event)
         self.send_button.Bind(wx.EVT_BUTTON, self.send_message_event)
 
     def close_window_event(self, e):
         self.logout()
         MainWindow.app.Destroy()  # TODO  noticing
         wx.Exit()                 # TODO  better than exit(0)
+
+    def choose_user_event(self, e):
+        if self.user_list_box.GetItems():
+            self.selected_user = self.user_list_box.GetStringSelection()
+            n = self.user_list_box.GetSelection()
+            if n != -1:
+                self.user_name_text.SetLabel(self.selected_user)
+                self.refresh_chat_records(self.selected_user)
 
     def send_message_event(self, e):
         value = self.input_field.GetValue().strip()
@@ -63,18 +72,14 @@ class MainWindow(MainFrame, MessageSender):
             if self.user_list_box.GetItems():
                 self.group(value)
                 self.create_chat_record("group", value)
-                self.show_chat_records(self.selected_user)
+                self.refresh_chat_records(self.selected_user)
             else:
                 self.show_tip(u"群聊为空")
         else:
             self.private(value, self.selected_user)
             self.create_chat_record(self.selected_user, value)
-            self.show_chat_records(self.selected_user)
+            self.refresh_chat_records(self.selected_user)
 
-    def choose_user_event(self, e):
-        if self.user_list_box.GetItems():
-            self.selected_user = self.user_list_box.GetStringSelection()
-            n = self.user_list_box.GetSelection()
-            if n != -1:
-                self.user_name_text.SetLabel(self.selected_user)
-                self.show_chat_records(self.selected_user)
+    def get_notice_event(self, e):
+        # TODO
+        pass

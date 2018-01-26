@@ -4,7 +4,6 @@
 import json
 import socket
 import wx
-from wx.lib.pubsub import pub
 from client import Single
 
 
@@ -58,27 +57,14 @@ class MessageHandler(Client):
     def private_handler(self, message_dict):
         sender = message_dict.get("sender")
         selected_user = self.window.selected_user
-        is_selected_user = sender == selected_user
         wx.CallAfter(
             self.window.add_record,
-            sender,
-            message_dict.get("ext_data"),
-            is_selected_user
+            sender, message_dict.get("ext_data")
         )
-        if is_selected_user:
-            wx.CallAfter(
-                self.window.show_chat_records,
-                selected_user
-            )
-        else:
-            pub.sendMessage("find_sender", sender=sender)
-            n = self.window.find_sender
-            if n != -1:
-                wx.CallAfter(
-                    self.window.user_list_box.Delete,
-                    n
-                )
-                wx.CallAfter(
-                    self.window.user_list_box.Insert,
-                    sender + u"♥", n
-                )
+        wx.CallAfter(
+            self.window.refresh_chat_records,
+            selected_user
+        )
+        wx.CallAfter(
+            self.window.refresh_unread_tip
+        )

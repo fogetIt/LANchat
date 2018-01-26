@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-24 17:54:45
 # @Last Modified time: 2018-01-24 17:55:08
-import wx
 from client import (
+    wx,
     Single,
     COLOR_WHITE,
     COLOR_GREEN,
@@ -10,7 +10,8 @@ from client import (
     FONT12,
     FONT13
 )
-from .message_sizer import MessageSizer
+from .notice_button import NoticeButton
+from .record_panel import RecordPanel
 
 
 class LeftSizer(Single):
@@ -33,16 +34,13 @@ class LeftSizer(Single):
         )
 
 
-class RightTopSizer(Single):
+class RightTopSizer(NoticeButton):
 
     def __init__(self, panel):
-        self.notice_button = wx.Button(
-            parent=panel, id=21, size=(0, 30), label=u"♡", style=wx.ALIGN_LEFT
-        )
+        super(RightTopSizer, self).__init__(panel)
         self.user_name_text = wx.StaticText(
             parent=panel, id=22, size=(0, 30), label="", style=wx.ALIGN_CENTER
         )
-        self.notice_button.SetFont(FONT13)
         self.user_name_text.SetFont(FONT13)
         self.user_name_text.SetForegroundColour(COLOR_BLUE)
         self.right_top_sizer = wx.BoxSizer()
@@ -54,10 +52,10 @@ class RightTopSizer(Single):
         )
 
 
-class RightSizer(MessageSizer, RightTopSizer):
+class RightSizer(RecordPanel, RightTopSizer):
 
     def __init__(self, panel):
-        MessageSizer.__init__(self, panel)
+        RecordPanel.__init__(self, panel)
         RightTopSizer.__init__(self, panel)
 
         self.input_field = wx.TextCtrl(
@@ -74,7 +72,7 @@ class RightSizer(MessageSizer, RightTopSizer):
             self.right_top_sizer, proportion=0, border=0, flag=wx.EXPAND | wx.LEFT
         )
         self.right_sizer.Add(
-            self.message_panel, proportion=8, border=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT
+            self.record_panel, proportion=8, border=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT
         )
         self.right_sizer.Add(
             self.input_field, proportion=2, border=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
