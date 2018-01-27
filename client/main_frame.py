@@ -17,7 +17,7 @@ class MainSizer(UserListBox, NoticeButton, RecordPanel, InputField, SendButton, 
         self.left_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_top_sizer = wx.BoxSizer()
-        config = {
+        self.layout({
             "object": self.main_sizer,
             "items": [
                 {
@@ -76,8 +76,7 @@ class MainSizer(UserListBox, NoticeButton, RecordPanel, InputField, SendButton, 
                     ]
                 }
             ]
-        }
-        self.layout(config)
+        })
         panel.SetSizer(self.main_sizer)
 
     def layout(self, d):
