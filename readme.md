@@ -9,7 +9,7 @@ install  python setup.py install [--prefix=path/to/project]
 - server
     + include
         * [server/](./server)
-        * [server_views.py](server/views.py)
+        * [server_views.py](server/events.py)
         * [run.py](./run.py)
     + run
         ```shell

@@ -19,12 +19,11 @@ def create_message(sender=None, title=None, ext_data=None):
 
 group_message = partial(create_message, title="group")
 private_message = partial(create_message, title="private")
-user_list_message = partial(
-    create_message, sender="system", ext_data=app.user_list)
-error_message = partial(create_message, sender="system", title="error")
+error_message = partial(create_message, title="error", sender="system")
+user_list_message = partial(create_message, title="user_list", sender="system", ext_data=app.user_list)
 
 
-class Views(object):
+class Events(object):
 
     def close_client(self, client_socket):
         result = app.remove_client(client_socket=client_socket)

@@ -1,70 +1,80 @@
 # -*- coding: utf-8 -*-
-# @Date:   2018-01-26 13:14:16
-# @Last Modified time: 2018-01-26 13:14:34
-import json
-import socket
-import wx
-from client import Single
+# @Last Modified time: 2018-01-24 21:21:12
+import wx.lib.scrolledpanel as scrolled
+from client import (
+    wx, FONT11, FONT12, FONT13, COLOR_BLUE, COLOR_RED
+)
+from .utils import Single, StaticTextCtrl
+from .models import RecordStore
 
 
-class Client(Single):
+class RecordPanel(RecordStore):
 
-    def __init__(self):
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.setblocking(1)
-        self.user_name = socket.gethostname()
+    def __init__(self, panel):
+        super(RecordPanel, self).__init__()
+        self.record_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.record_panel = scrolled.ScrolledPanel(
+            parent=panel, id=30, style=wx.SIMPLE_BORDER
+        )
+        self.record_panel.SetSizer(self.record_sizer)
+
+    def create_record_sizer(self, user, value, is_self=True):
+        record = StaticTextCtrl(parent=self.record_panel, value=value)
+        record.SetFont(FONT12)
+        if is_self:
+            self.record_sizer.Add(
+                record, proportion=0, border=150, flag=wx.EXPAND | wx.LEFT
+            )
+        else:
+            self.record_sizer.Add(
+                record, proportion=0, border=150, flag=wx.EXPAND | wx.RIGHT
+            )
+        record.Hide()
+        self.add_record(user, record)
+
+    def refresh_records_panel(self, user):
+        """
+        Destroy record_panel's sub object, and try to reduce record.
+        self.record_panel.RemoveChild()  # 销毁后的子对象，不能再 Add()
+        """
+        self.record_panel.DestroyChildren()
+        self.record_sizer.Clear(deleteWindows=False)
+        unread_num, record_list = self.get_record(user)
+        if record_list:
+            for i in record_list:
+                i.Show()
+            self.record_panel.SetupScrolling()
+        self.reduce_record(user)
 
 
-class MessageSender(Client):
+class UserNameText(Single):
 
-    @staticmethod
-    def create_message(title, receiver="", ext_data=None):
-        message_dict = {"title": title}
-        if receiver:
-            message_dict.update({"receiver": receiver})
-        if ext_data:
-            message_dict.update(ext_data)
-        return json.dumps(message_dict)
+    def __init__(self, panel):
+        self.user_name_text = wx.StaticText(
+            parent=panel, id=22, size=(0, 30), label="", style=wx.ALIGN_CENTER
+        )
+        self.user_name_text.SetFont(FONT13)
+        self.user_name_text.SetForegroundColour(COLOR_BLUE)
 
-    def login(self, host, port):
-        self.client.connect((host, port))
-        self.client.send(
-            self.create_message("login", ext_data={"name": self.user_name})
+
+class UnreadListBox(Single):
+
+    def __init__(self, panel):
+        self.unread_list_box = wx.ListBox(
+            parent=panel, id=11, name='unread_list', choices=[], style=wx.LB_SINGLE
+        )
+        self.unread_list_box.SetFont(FONT11)
+        self.unread_list_box.SetForegroundColour(COLOR_RED)
+
+        self.left_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.left_sizer.Add(
+            self.unread_list_box, proportion=10, border=0, flag=wx.EXPAND | wx.ALL
         )
 
-    def logout(self):
-        self.client.send(self.create_message("logout"))
-        self.client.close()
 
-    def private(self, value, receiver):
-        self.client.send(
-            self.create_message("private", receiver=receiver, ext_data={"ext_data": value})
+class InputField(Single):
+    def __init__(self, panel):
+        self.input_field = wx.TextCtrl(
+            parent=panel, id=23, value="", style=wx.TE_MULTILINE | wx.TE_RICH2
         )
-
-    def group(self, value):
-        self.client.send(
-            self.create_message("group", ext_data={"ext_data": value})
-        )
-
-
-class MessageHandler(Client):
-
-    def __init__(self):
-        super(MessageHandler, self).__init__()
-        from .window import MainWindow
-        self.window = MainWindow()
-
-    def private_handler(self, message_dict):
-        sender = message_dict.get("sender")
-        selected_user = self.window.selected_user
-        wx.CallAfter(
-            self.window.add_record,
-            sender, message_dict.get("ext_data")
-        )
-        wx.CallAfter(
-            self.window.refresh_chat_records,
-            selected_user
-        )
-        wx.CallAfter(
-            self.window.refresh_unread_tip
-        )
+        self.input_field.SetFont(FONT12)

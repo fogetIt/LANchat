@@ -22,4 +22,4 @@ class RouterError(Exception):
         super(RouterError, self).__init__(err)
 
 
-from .views import app, error_message
+from .events import app, error_message

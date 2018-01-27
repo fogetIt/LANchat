@@ -19,17 +19,10 @@ def font(size):
         weight=wx.BOLD
     )
 
+FONT11 = font(11)
 FONT12 = font(12)
 FONT13 = font(13)
 
 
-class Single(object):
-
-    @staticmethod
-    def __new__(cls, *args, **kwargs):
-        if not hasattr(cls, "_instance"):
-            cls._instance = super(Single, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-
 from .window import MainWindow
-from .views import MessageHandler
+from .message import MessageHandler

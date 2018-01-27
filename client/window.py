@@ -1,9 +1,76 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-26 13:23:04
 # @Last Modified time: 2018-01-26 13:23:12
-import wx
-from .sizer import Sizer
-from .views import MessageSender
+from client import wx
+from .message import MessageSender
+from .controller import NoticeButton, UserListBox, SendButton
+from .views import RecordPanel, UserNameText, InputField
+
+
+class LeftSizer(UserListBox):
+
+    def __init__(self, panel):
+        """
+        use BoxSizer to avoid hard-coded widget's pos and size
+        """
+        UserListBox.__init__(self, panel)
+        self.left_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.left_sizer.Add(
+            self.user_list_box, proportion=10, border=0, flag=wx.EXPAND | wx.ALL
+        )
+
+
+class RightTopSizer(NoticeButton, UserNameText):
+
+    def __init__(self, panel):
+        NoticeButton.__init__(self, panel)
+        UserNameText.__init__(self, panel)
+        self.right_top_sizer = wx.BoxSizer()
+        self.right_top_sizer.Add(
+            self.notice_button, proportion=4.5, border=240, flag=wx.EXPAND | wx.RIGHT
+        )
+        self.right_top_sizer.Add(
+            self.user_name_text, proportion=5.5, border=0, flag=wx.EXPAND | wx.LEFT
+        )
+
+
+class RightSizer(RightTopSizer, RecordPanel, InputField, SendButton):
+
+    def __init__(self, panel):
+        InputField.__init__(self, panel)
+        SendButton.__init__(self, panel)
+        RecordPanel.__init__(self, panel)
+        RightTopSizer.__init__(self, panel)
+
+        self.right_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.right_sizer.Add(
+            self.right_top_sizer, proportion=0, border=0, flag=wx.EXPAND | wx.LEFT
+        )
+        self.right_sizer.Add(
+            self.record_panel, proportion=8, border=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT
+        )
+        self.right_sizer.Add(
+            self.input_field, proportion=2, border=0, flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+        )
+        self.right_sizer.Add(
+            self.send_button, proportion=0, border=250, flag=wx.EXPAND | wx.LEFT | wx.RIGHT,
+        )
+
+
+class Sizer(LeftSizer, RightSizer):
+
+    def __init__(self, panel):
+        LeftSizer.__init__(self, panel)
+        RightSizer.__init__(self, panel)
+
+        self.main_sizer = wx.BoxSizer()
+        self.main_sizer.Add(
+            self.left_sizer, proportion=2.5, border=5, flag=wx.EXPAND | wx.LEFT | wx.TOP | wx.BOTTOM
+        )
+        self.main_sizer.Add(
+            self.right_sizer, proportion=7.5, border=5, flag=wx.EXPAND | wx.RIGHT | wx.TOP | wx.BOTTOM
+        )
+        panel.SetSizer(self.main_sizer)
 
 
 class MainFrame(wx.Frame, Sizer):
@@ -45,41 +112,8 @@ class MainWindow(MainFrame, MessageSender):
         MessageSender.__init__(self)
 
         self.Bind(wx.EVT_CLOSE, self.close_window_event)
-        self.user_list_box.Bind(wx.EVT_LEFT_UP, self.choose_user_event)
-        self.notice_button.Bind(wx.EVT_BUTTON, self.get_notice_event)
-        self.send_button.Bind(wx.EVT_BUTTON, self.send_message_event)
 
     def close_window_event(self, e):
         self.logout()
         MainWindow.app.Destroy()  # TODO  noticing
         wx.Exit()                 # TODO  better than exit(0)
-
-    def choose_user_event(self, e):
-        if self.user_list_box.GetItems():
-            self.selected_user = self.user_list_box.GetStringSelection()
-            n = self.user_list_box.GetSelection()
-            if n != -1:
-                self.user_name_text.SetLabel(self.selected_user)
-                self.refresh_chat_records(self.selected_user)
-
-    def send_message_event(self, e):
-        value = self.input_field.GetValue().strip()
-        if not self.selected_user:
-            self.show_tip(u"未选择用户")
-        elif not value:
-            self.show_tip(u"发送信息为空")
-        elif self.selected_user == "group":
-            if self.user_list_box.GetItems():
-                self.group(value)
-                self.create_chat_record("group", value)
-                self.refresh_chat_records(self.selected_user)
-            else:
-                self.show_tip(u"群聊为空")
-        else:
-            self.private(value, self.selected_user)
-            self.create_chat_record(self.selected_user, value)
-            self.refresh_chat_records(self.selected_user)
-
-    def get_notice_event(self, e):
-        # TODO
-        pass
