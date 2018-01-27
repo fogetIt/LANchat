@@ -3,7 +3,7 @@
 # @Last Modified time: 2018-01-25 17:00:22
 import json
 from threading import Thread
-from client import BUFFER_SIZE, MainFrame, MessageReceiver
+from client import BUFFER_SIZE, MainFrame, Client
 
 
 class GUI(Thread, MainFrame):
@@ -15,6 +15,29 @@ class GUI(Thread, MainFrame):
 
     def run(self):
         MainFrame.app.MainLoop()
+
+
+class MessageReceiver(Client):
+
+    def __init__(self):
+        super(MessageReceiver, self).__init__()
+        from client.frame import MainFrame
+        self.window = MainFrame()
+
+    def private_handler(self, message_dict):
+        sender = message_dict.get("sender")
+        selected_user = self.window.selected_user
+        wx.CallAfter(
+            self.window.add_record,
+            sender, message_dict.get("ext_data")
+        )
+        wx.CallAfter(
+            self.window.refresh_chat_records,
+            selected_user
+        )
+        wx.CallAfter(
+            self.window.refresh_unread_tip
+        )
 
 
 class REPL(Thread, MessageReceiver):

@@ -2,9 +2,8 @@
 # @Last Modified time: 2018-01-24 21:21:12
 import wx.lib.scrolledpanel as scrolled
 from client import (
-    wx, FONT11, FONT12, FONT13, COLOR_BLUE, COLOR_RED
+    wx, Single, StaticTextCtrl, FONT12, FONT13, COLOR_BLUE
 )
-from .utils import Single, StaticTextCtrl
 from .models import RecordStore
 
 
@@ -57,19 +56,21 @@ class UserNameText(Single):
         self.user_name_text.SetForegroundColour(COLOR_BLUE)
 
 
-class UnreadListBox(Single):
-
-    def __init__(self, panel):
-        self.unread_list_box = wx.ListBox(
-            parent=panel, id=11, name='unread_list', choices=[], style=wx.LB_SINGLE
-        )
-        self.unread_list_box.SetFont(FONT11)
-        self.unread_list_box.SetForegroundColour(COLOR_RED)
-
-
 class InputField(Single):
     def __init__(self, panel):
         self.input_field = wx.TextCtrl(
             parent=panel, id=23, value="", style=wx.TE_MULTILINE | wx.TE_RICH2
         )
         self.input_field.SetFont(FONT12)
+
+
+class Tip(Single):
+
+    def show_tip(self, msg):
+        self.tip = wx.MessageDialog(
+            parent=None,
+            message="\n%s" % msg,
+            pos=(60, 25),
+            style=wx.ICON_EXCLAMATION | wx.OK_DEFAULT
+        )
+        self.tip.ShowModal()

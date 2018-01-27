@@ -2,11 +2,42 @@
 # @Date:   2018-01-27 17:11:36
 # @Last Modified time: 2018-01-27 17:11:47
 from client import (
-    wx, FONT12, FONT13, COLOR_RED, COLOR_BLUE, COLOR_WHITE, COLOR_GREEN
+    wx, Single, Client, FONT11, FONT12, FONT13, COLOR_RED, COLOR_BLUE, COLOR_WHITE, COLOR_GREEN
 )
 from .models import RecordStore
-from .views import RecordPanel, UserNameText, InputField
-from .utils import Tip
+from .views import RecordPanel, UserNameText, InputField, Tip
+
+
+class MessageSender(Client):
+
+    @staticmethod
+    def create_message(title, receiver="", ext_data=None):
+        message_dict = {"title": title}
+        if receiver:
+            message_dict.update({"receiver": receiver})
+        if ext_data:
+            message_dict.update(ext_data)
+        return json.dumps(message_dict)
+
+    def login(self, host, port):
+        self.client.connect((host, port))
+        self.client.send(
+            self.create_message("login", ext_data={"name": self.user_name})
+        )
+
+    def logout(self):
+        self.client.send(self.create_message("logout"))
+        self.client.close()
+
+    def private(self, value, receiver):
+        self.client.send(
+            self.create_message("private", receiver=receiver, ext_data={"ext_data": value})
+        )
+
+    def group(self, value):
+        self.client.send(
+            self.create_message("group", ext_data={"ext_data": value})
+        )
 
 
 class UserListBox(RecordPanel, UserNameText):
@@ -35,6 +66,20 @@ class UserListBox(RecordPanel, UserNameText):
                 self.refresh_records_panel(self.selected_user)
 
 
+class UnreadListTip(Single):
+
+    def __init__(self, panel):
+        self.list_tip = wx.Dialog()
+        self.unread_list_box = wx.ListBox(
+            parent=panel, id=11, name='unread_list', choices=[], style=wx.LB_SINGLE
+        )
+        self.unread_list_box.SetFont(FONT11)
+        self.unread_list_box.SetForegroundColour(COLOR_RED)
+
+    def show_list_tip(self):
+        pass
+
+
 class NoticeButton(RecordStore):
 
     def __init__(self, panel):
@@ -57,16 +102,14 @@ class NoticeButton(RecordStore):
             self.notice_button.SetForegroundColour(COLOR_RED)
         self.notice_button.SetLabel(label)
 
-    def refresh_unread_tip(self):
-        # TODO
-        pass
-
     def get_notice_event(self, e):
-        # TODO
+        """
+        show unread list dialog
+        """
         pass
 
 
-class SendButton(RecordStore, InputField, UserListBox):
+class SendButton(RecordPanel, InputField, Tip, MessageSender):
 
     def __init__(self, panel):
         RecordStore.__init__(self)
@@ -79,14 +122,13 @@ class SendButton(RecordStore, InputField, UserListBox):
 
     def send_message_event(self, e):
         value = self.input_field.GetValue().strip()
-
         if not value:
-            Tip.show(u"发送信息为空")
+            self.show_tip(u"发送信息为空")
         elif not self.selected_user:
-            Tip.show(u"未选择用户")
+            self.show_tip(u"未选择用户")
         elif self.selected_user == "group":
             if not self.user_list:
-                Tip.show(u"群聊为空")
+                self.show_tip(u"群聊为空")
             else:
                 self.group(value)
                 self.create_record_sizer("group", value)

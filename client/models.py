@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-27 17:44:21
 # @Last Modified time: 2018-01-27 17:44:39
-from .utils import Single, StaticListDict
+from client import Single, StaticListDict
 
 
 class RecordStore(Single):
