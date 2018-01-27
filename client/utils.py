@@ -49,3 +49,18 @@ class StaticListDict(tuple):
         except Exception as e:
             print(e)
             return None
+
+
+class Tip(Single, wx.MessageDialog):
+
+    def __init__(self, msg):
+        super(Tip, self).__init__(
+            parent=None,
+            message="\n%s" % msg,
+            pos=(60, 25),
+            style=wx.ICON_EXCLAMATION | wx.OK_DEFAULT
+        )
+
+    @staticmethod
+    def show(msg):
+        Tip(msg).ShowModal()

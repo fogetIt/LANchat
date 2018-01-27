@@ -4,7 +4,7 @@
 import json
 import socket
 import wx
-from client import Single
+from .utils import Single
 
 
 class Client(Single):
@@ -47,11 +47,11 @@ class MessageSender(Client):
         )
 
 
-class MessageHandler(Client):
+class MessageReceiver(Client):
 
     def __init__(self):
-        super(MessageHandler, self).__init__()
-        from .window import MainWindow
+        super(MessageReceiver, self).__init__()
+        from .main_frame import MainWindow
         self.window = MainWindow()
 
     def private_handler(self, message_dict):

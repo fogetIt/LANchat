@@ -3,25 +3,25 @@
 # @Last Modified time: 2018-01-25 17:00:22
 import json
 from threading import Thread
-from client import BUFFER_SIZE, MainWindow, MessageHandler
+from client import BUFFER_SIZE, MainFrame, MessageReceiver
 
 
-class GUI(Thread, MainWindow):
+class GUI(Thread, MainFrame):
 
     def __init__(self, host, port):
         Thread.__init__(self)
-        MainWindow.__init__(self)
+        MainFrame.__init__(self)
         self.login(host, port)
 
     def run(self):
-        MainWindow.app.MainLoop()
+        MainFrame.app.MainLoop()
 
 
-class REPL(Thread, MessageHandler):
+class REPL(Thread, MessageReceiver):
 
     def __init__(self, window):
         Thread.__init__(self)
-        MessageHandler.__init__(self)
+        MessageReceiver.__init__(self)
         self.window = window
 
     def run(self):

@@ -24,5 +24,5 @@ FONT12 = font(12)
 FONT13 = font(13)
 
 
-from .window import MainWindow
-from .message import MessageHandler
+from .main_frame import MainFrame
+from .message import MessageReceiver

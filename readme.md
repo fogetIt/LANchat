@@ -44,8 +44,8 @@ install  python setup.py install [--prefix=path/to/project]
 [^_^]: wxPython concurrent
 ```
 wxPython
-    wx.App.MainLoop() 用一个死循环来维持 GUI
-    GUI 操作必须发生在 main thread 或者 wx.App.MainLoop() thread
+    wx.App().MainLoop() 用一个死循环来维持 GUI
+    GUI 操作必须发生在 main thread 或者 wx.App().MainLoop() thread
     所以，无法通过共用 class object 来更新 GUI
 python threading
     只能利用到一个计算机核（同一时刻干一件事） --> 如果线程工作时间过长，容易造成 GUI 卡死

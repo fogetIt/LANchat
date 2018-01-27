@@ -4,6 +4,7 @@
 from client import wx, FONT12, FONT13, COLOR_RED, COLOR_BLUE, COLOR_WHITE, COLOR_GREEN
 from .models import NumberIcons
 from .views import RecordPanel, UserNameText, InputField
+from .utils import Tip
 
 
 class UserListBox(RecordPanel, UserNameText):
@@ -63,7 +64,7 @@ class NoticeButton(NumberIcons):
         pass
 
 
-class SendButton(RecordPanel, InputField):
+class SendButton(RecordPanel, InputField, UserListBox):
 
     def __init__(self, panel):
         InputField.__init__(self, panel)
@@ -77,16 +78,16 @@ class SendButton(RecordPanel, InputField):
     def send_message_event(self, e):
         value = self.input_field.GetValue().strip()
         if not self.selected_user:
-            self.show_tip(u"未选择用户")
+            Tip.show(u"未选择用户")
         elif not value:
-            self.show_tip(u"发送信息为空")
+            Tip.show(u"发送信息为空")
         elif self.selected_user == "group":
             if self.user_list_box.GetItems():
                 self.group(value)
                 self.create_record_sizer("group", value)
                 self.refresh_records_panel(self.selected_user)
             else:
-                self.show_tip(u"群聊为空")
+                Tip.show(u"群聊为空")
         else:
             self.private(value, self.selected_user)
             self.create_record_sizer(self.selected_user, value)
