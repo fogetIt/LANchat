@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-27 17:11:36
 # @Last Modified time: 2018-01-27 17:11:47
-from client import wx, FONT12, FONT13, COLOR_RED, COLOR_BLUE, COLOR_WHITE, COLOR_GREEN
-from .models import NumberIcons
+from client import (
+    wx, FONT12, FONT13, COLOR_RED, COLOR_BLUE, COLOR_WHITE, COLOR_GREEN
+)
+from .models import RecordStore
 from .views import RecordPanel, UserNameText, InputField
 from .utils import Tip
 
@@ -26,14 +28,14 @@ class UserListBox(RecordPanel, UserNameText):
 
     def choose_user_event(self, e):
         if self.user_list_box.GetItems():
-            self.selected_user = self.user_list_box.GetStringSelection()
             n = self.user_list_box.GetSelection()
             if n != -1:
+                self.selected_user = self.user_list_box.GetStringSelection()
                 self.user_name_text.SetLabel(self.selected_user)
                 self.refresh_records_panel(self.selected_user)
 
 
-class NoticeButton(NumberIcons):
+class NoticeButton(RecordStore):
 
     def __init__(self, panel):
         """
@@ -64,11 +66,11 @@ class NoticeButton(NumberIcons):
         pass
 
 
-class SendButton(RecordPanel, InputField, UserListBox):
+class SendButton(RecordStore, InputField, UserListBox):
 
     def __init__(self, panel):
+        RecordStore.__init__(self)
         InputField.__init__(self, panel)
-        RecordPanel.__init__(self, panel)
         self.send_button = wx.Button(
             parent=panel, id=24, size=(0, 40), label=u"发送"
         )
@@ -77,17 +79,18 @@ class SendButton(RecordPanel, InputField, UserListBox):
 
     def send_message_event(self, e):
         value = self.input_field.GetValue().strip()
-        if not self.selected_user:
-            Tip.show(u"未选择用户")
-        elif not value:
+
+        if not value:
             Tip.show(u"发送信息为空")
+        elif not self.selected_user:
+            Tip.show(u"未选择用户")
         elif self.selected_user == "group":
-            if self.user_list_box.GetItems():
+            if not self.user_list:
+                Tip.show(u"群聊为空")
+            else:
                 self.group(value)
                 self.create_record_sizer("group", value)
                 self.refresh_records_panel(self.selected_user)
-            else:
-                Tip.show(u"群聊为空")
         else:
             self.private(value, self.selected_user)
             self.create_record_sizer(self.selected_user, value)

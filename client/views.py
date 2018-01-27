@@ -66,11 +66,6 @@ class UnreadListBox(Single):
         self.unread_list_box.SetFont(FONT11)
         self.unread_list_box.SetForegroundColour(COLOR_RED)
 
-        self.left_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.left_sizer.Add(
-            self.unread_list_box, proportion=10, border=0, flag=wx.EXPAND | wx.ALL
-        )
-
 
 class InputField(Single):
     def __init__(self, panel):

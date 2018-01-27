@@ -12,6 +12,9 @@ class RecordStore(Single):
         self.unread_dict = {}
         self.selected_user = u""
         self.user_list = []
+        self.number_icons = StaticListDict(
+            [u"⓿", u"➊", u"➋", u"➌", u"➍", u"➎", u"➏", u"➐", u"➑", u"➒", u"➓", u"∞"]
+        )
 
     def add_record(self, user, record):
         if not user == self.selected_user:
@@ -37,14 +40,6 @@ class RecordStore(Single):
         unread_num = int(self.unread_dict.get(user, 0))
         record_list = self.user_record_dict.get(user)
         return unread_num, record_list
-
-
-class NumberIcons(Single):
-
-    def __init__(self):
-        self.number_icons = StaticListDict(
-            [u"⓿", u"➊", u"➋", u"➌", u"➍", u"➎", u"➏", u"➐", u"➑", u"➒", u"➓", u"∞"]
-        )
 
     def get_icon(self, i):
         if i >= len(self.number_icons):

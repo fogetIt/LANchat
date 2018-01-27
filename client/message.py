@@ -51,7 +51,7 @@ class MessageReceiver(Client):
 
     def __init__(self):
         super(MessageReceiver, self).__init__()
-        from .main_frame import MainFrame
+        from .frame import MainFrame
         self.window = MainFrame()
 
     def private_handler(self, message_dict):

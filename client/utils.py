@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-27 17:22:26
 # @Last Modified time: 2018-01-27 17:22:32
-from client import wx
+from client import wx, FONT11, COLOR_RED
 
 
 class Single(object):
@@ -49,6 +49,16 @@ class StaticListDict(tuple):
         except Exception as e:
             print(e)
             return None
+
+
+class UnreadListBox(Single):
+
+    def __init__(self):
+        self.unread_list_box = wx.ListBox(
+            parent=None, id=11, name='unread_list', choices=[], style=wx.LB_SINGLE
+        )
+        self.unread_list_box.SetFont(FONT11)
+        self.unread_list_box.SetForegroundColour(COLOR_RED)
 
 
 class Tip(Single, wx.MessageDialog):
