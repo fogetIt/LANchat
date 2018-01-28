@@ -11,7 +11,7 @@ class Layout(Components):
         """
         use BoxSizer to avoid hard-coded widget's pos and size
         """
-        super(Layout).__init__(panel)
+        super(Layout, self).__init__(panel)
         self.main_sizer = wx.BoxSizer()
         self.left_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -80,7 +80,7 @@ class Layout(Components):
     def layout(self, d):
         if isinstance(d, dict):
             object = d.get("object")
-            items = d.get("items")
-            for item in items.iteritems():
+            items = d.get("items", [])
+            for item in items:
                 object.Add(self.layout(item), **item.get("style"))
             return object

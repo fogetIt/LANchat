@@ -21,8 +21,7 @@ class MessageReceiver(Client):
 
     def __init__(self):
         super(MessageReceiver, self).__init__()
-        from client.views import Views
-        self.window = Views()
+        self.window = Controller()
 
     def private_handler(self, message_dict):
         sender = message_dict.get("sender")

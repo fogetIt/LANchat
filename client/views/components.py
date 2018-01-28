@@ -82,12 +82,13 @@ class Tip(Single):
 class UnreadTip(Single):
 
     def __init__(self, panel):
-        self.list_tip = wx.Dialog()
-        self.unread_list_box = wx.ListBox(
-            parent=panel, id=11, name='unread_list', choices=[], style=wx.LB_SINGLE
-        )
-        self.unread_list_box.SetFont(FONT11)
-        self.unread_list_box.SetForegroundColour(COLOR_RED)
+        pass
+        # self.list_tip = wx.Dialog()
+        # self.unread_list_box = wx.ListBox(
+        #     parent=panel, id=11, name='unread_list', choices=[], style=wx.LB_SINGLE
+        # )
+        # self.unread_list_box.SetFont(FONT11)
+        # self.unread_list_box.SetForegroundColour(COLOR_RED)
 
 
 class Components(UserListBox, NoticeButton, UserNameText, RecordPanel, InputField, SendButton, Tip, UnreadTip):

@@ -48,6 +48,9 @@ class Service(RecordStore, Views):
         Views.__init__(self)
         RecordStore.__init__(self)
 
+    def refresh_user_list_box(self, user_list):
+        pass
+
     def create_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
         record.SetFont(FONT12)
@@ -62,7 +65,7 @@ class Service(RecordStore, Views):
         record.Hide()
         self.add_record(user, record)
 
-    def refresh_records_panel(self, user):
+    def refresh_record_panel(self, user):
         """
         Destroy record_panel's sub object, and try to reduce record.
         self.record_panel.RemoveChild()  # 销毁后的子对象，不能再 Add()
