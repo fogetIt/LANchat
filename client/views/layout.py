@@ -15,7 +15,7 @@ class Layout(Components):
         self.main_sizer = wx.BoxSizer()
         self.left_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_sizer = wx.BoxSizer(wx.VERTICAL)
-        self.right_top_sizer = wx.BoxSizer()
+        self.right_top_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.layout({
             "object": self.main_sizer,
             "items": [

@@ -49,7 +49,7 @@ class Service(RecordStore, Views):
         RecordStore.__init__(self)
 
     def refresh_user_list_box(self, user_list):
-        pass
+        self.unread_list_box.Append("")
 
     def create_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
@@ -110,7 +110,7 @@ class Controller(Service, MessageSender):
             if n != -1:
                 self.selected_user = self.user_list_box.GetStringSelection()
                 self.user_name_text.SetLabel(self.selected_user)
-                self.refresh_records_panel(self.selected_user)
+                self.refresh_record_panel(self.selected_user)
 
     def get_notice_event(self, e):
         """
@@ -130,8 +130,8 @@ class Controller(Service, MessageSender):
             else:
                 self.group(value)
                 self.create_record_sizer("group", value)
-                self.refresh_records_panel(self.selected_user)
+                self.refresh_record_panel(self.selected_user)
         else:
             self.private(value, self.selected_user)
             self.create_record_sizer(self.selected_user, value)
-            self.refresh_records_panel(self.selected_user)
+            self.refresh_record_panel(self.selected_user)
