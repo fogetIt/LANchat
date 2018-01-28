@@ -80,4 +80,4 @@ class StaticListDict(tuple):
             return None
 
 
-from .frame import MainFrame
+from .controller import Controller

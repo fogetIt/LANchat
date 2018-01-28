@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-# @Date:   2018-01-27 17:11:36
-# @Last Modified time: 2018-01-27 17:11:47
+# @Date:   2018-01-28 20:00:25
+# @Last Modified time: 2018-01-28 20:00:32
+import json
+import wx.lib.scrolledpanel as scrolled
 from client import (
-    wx, Single, Client, FONT11, FONT12, FONT13, COLOR_RED, COLOR_BLUE, COLOR_WHITE, COLOR_GREEN
+    wx, StaticTextCtrl, Client, FONT12, COLOR_RED, COLOR_BLUE
 )
 from .models import RecordStore
-from .views import RecordPanel, UserNameText, InputField, Tip
+from .views import Views
 
 
 class MessageSender(Client):
@@ -40,59 +42,39 @@ class MessageSender(Client):
         )
 
 
-class UserListBox(RecordPanel, UserNameText):
+class Service(RecordStore, Views):
 
-    def __init__(self, panel):
+    def __init__(self):
+        Views.__init__(self)
+        RecordStore.__init__(self)
+
+    def create_record_sizer(self, user, value, is_self=True):
+        record = StaticTextCtrl(parent=self.record_panel, value=value)
+        record.SetFont(FONT12)
+        if is_self:
+            self.record_sizer.Add(
+                record, proportion=0, border=150, flag=wx.EXPAND | wx.LEFT
+            )
+        else:
+            self.record_sizer.Add(
+                record, proportion=0, border=150, flag=wx.EXPAND | wx.RIGHT
+            )
+        record.Hide()
+        self.add_record(user, record)
+
+    def refresh_records_panel(self, user):
         """
-        use BoxSizer to avoid hard-coded widget's pos and size
+        Destroy record_panel's sub object, and try to reduce record.
+        self.record_panel.RemoveChild()  # 销毁后的子对象，不能再 Add()
         """
-        RecordPanel.__init__(self, panel)
-        UserNameText.__init__(self, panel)
-        self.user_list_box = wx.ListBox(
-            parent=panel, id=11, name='user_list', choices=[], style=wx.LB_SINGLE
-        )
-        self.user_list_box.SetFont(FONT12)
-        self.user_list_box.SetForegroundColour(COLOR_WHITE)
-        self.user_list_box.SetBackgroundColour(COLOR_GREEN)
-        self.user_list_box.Insert("group", 0)
-        self.user_list_box.Bind(wx.EVT_LEFT_UP, self.choose_user_event)
-
-    def choose_user_event(self, e):
-        if self.user_list_box.GetItems():
-            n = self.user_list_box.GetSelection()
-            if n != -1:
-                self.selected_user = self.user_list_box.GetStringSelection()
-                self.user_name_text.SetLabel(self.selected_user)
-                self.refresh_records_panel(self.selected_user)
-
-
-class UnreadListTip(Single):
-
-    def __init__(self, panel):
-        self.list_tip = wx.Dialog()
-        self.unread_list_box = wx.ListBox(
-            parent=panel, id=11, name='unread_list', choices=[], style=wx.LB_SINGLE
-        )
-        self.unread_list_box.SetFont(FONT11)
-        self.unread_list_box.SetForegroundColour(COLOR_RED)
-
-    def show_list_tip(self):
-        pass
-
-
-class NoticeButton(RecordStore):
-
-    def __init__(self, panel):
-        """
-        ♡ ♥
-        """
-        super(NoticeButton, self).__init__()
-        self.notice_button = wx.Button(
-            parent=panel, id=21, size=(0, 30), label=u"⓿", style=wx.ALIGN_LEFT
-        )
-        self.notice_button.SetFont(FONT13)
-        self.notice_button.SetForegroundColour(COLOR_BLUE)
-        self.notice_button.Bind(wx.EVT_BUTTON, self.get_notice_event)
+        self.record_panel.DestroyChildren()
+        self.record_sizer.Clear(deleteWindows=False)
+        unread_num, record_list = self.get_record(user)
+        if record_list:
+            for i in record_list:
+                i.Show()
+            self.record_panel.SetupScrolling()
+        self.reduce_record(user)
 
     def refresh_notice_icon(self, i):
         label = self.get_icon(i)
@@ -102,23 +84,36 @@ class NoticeButton(RecordStore):
             self.notice_button.SetForegroundColour(COLOR_RED)
         self.notice_button.SetLabel(label)
 
+
+class Controller(Service, MessageSender):
+    app = wx.App()
+
+    def __init__(self):
+        Service.__init__(self)
+        MessageSender.__init__(self)
+        self.Bind(wx.EVT_CLOSE, self.close_window_event)
+        self.user_list_box.Bind(wx.EVT_LEFT_UP, self.choose_user_event)
+        self.notice_button.Bind(wx.EVT_BUTTON, self.get_notice_event)
+        self.send_button.Bind(wx.EVT_BUTTON, self.send_message_event)
+
+    def close_window_event(self, e):
+        self.logout()
+        Controller.app.Destroy()  # TODO  noticing
+        wx.Exit()                 # TODO  better than exit(0)
+
+    def choose_user_event(self, e):
+        if self.user_list_box.GetItems():
+            n = self.user_list_box.GetSelection()
+            if n != -1:
+                self.selected_user = self.user_list_box.GetStringSelection()
+                self.user_name_text.SetLabel(self.selected_user)
+                self.refresh_records_panel(self.selected_user)
+
     def get_notice_event(self, e):
         """
         show unread list dialog
         """
         pass
-
-
-class SendButton(RecordPanel, InputField, Tip, MessageSender):
-
-    def __init__(self, panel):
-        RecordStore.__init__(self)
-        InputField.__init__(self, panel)
-        self.send_button = wx.Button(
-            parent=panel, id=24, size=(0, 40), label=u"发送"
-        )
-        self.send_button.SetFont(FONT13)
-        self.send_button.Bind(wx.EVT_BUTTON, self.send_message_event)
 
     def send_message_event(self, e):
         value = self.input_field.GetValue().strip()

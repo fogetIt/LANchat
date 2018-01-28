@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-# @Date:   2018-01-26 13:23:04
-# @Last Modified time: 2018-01-26 13:23:12
-from client import wx
-from .message import MessageSender
-from .controller import NoticeButton, UserListBox, SendButton
-from .views import RecordPanel, UserNameText, InputField
+# @Date:   2018-01-28 19:51:47
+# @Last Modified time: 2018-01-28 19:51:58
+import wx
+from .components import Components
 
 
-class MainSizer(UserListBox, NoticeButton, RecordPanel, InputField, SendButton, UserNameText):
+class Layout(Components):
 
     def __init__(self, panel):
         """
         use BoxSizer to avoid hard-coded widget's pos and size
         """
+        super(Layout).__init__(panel)
         self.main_sizer = wx.BoxSizer()
         self.left_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -77,7 +76,6 @@ class MainSizer(UserListBox, NoticeButton, RecordPanel, InputField, SendButton, 
                 }
             ]
         })
-        panel.SetSizer(self.main_sizer)
 
     def layout(self, d):
         if isinstance(d, dict):
@@ -86,33 +84,3 @@ class MainSizer(UserListBox, NoticeButton, RecordPanel, InputField, SendButton, 
             for item in items.iteritems():
                 object.Add(self.layout(item), **item.get("style"))
             return object
-
-
-class MainFrame(wx.Frame, MainSizer, MessageSender):
-    app = wx.App()
-
-    def __init__(self):
-        pos = (300, 50)
-        size = (800, 600)
-        wx.Frame.__init__(
-            self,
-            parent=None,
-            id=-1,
-            name="main",
-            title="simple chat client",
-            pos=pos,
-            size=size,
-            style=wx.DEFAULT_FRAME_STYLE
-        )
-        self.SetMaxSize(size)
-        self.SetMinSize(size)
-        self.panel = wx.Panel(parent=self, id=1)
-        MainSizer.__init__(self, self.panel)
-        MessageSender.__init__(self)
-        self.Bind(wx.EVT_CLOSE, self.close_window_event)
-        self.Show(True)  # TODO == MainFrame().Show()
-
-    def close_window_event(self, e):
-        self.logout()
-        MainFrame.app.Destroy()  # TODO  noticing
-        wx.Exit()                 # TODO  better than exit(0)

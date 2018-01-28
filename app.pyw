@@ -3,26 +3,26 @@
 # @Last Modified time: 2018-01-25 17:00:22
 import json
 from threading import Thread
-from client import BUFFER_SIZE, MainFrame, Client
+from client import wx, BUFFER_SIZE, Controller, Client
 
 
-class GUI(Thread, MainFrame):
+class GUI(Thread, Controller):
 
     def __init__(self, host, port):
         Thread.__init__(self)
-        MainFrame.__init__(self)
+        Controller.__init__(self)
         self.login(host, port)
 
     def run(self):
-        MainFrame.app.MainLoop()
+        Controller.app.MainLoop()
 
 
 class MessageReceiver(Client):
 
     def __init__(self):
         super(MessageReceiver, self).__init__()
-        from client.frame import MainFrame
-        self.window = MainFrame()
+        from client.views import Views
+        self.window = Views()
 
     def private_handler(self, message_dict):
         sender = message_dict.get("sender")
