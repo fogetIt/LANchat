@@ -23,19 +23,11 @@ class MessageReceiver(Client):
         super(MessageReceiver, self).__init__()
         self.window = Controller()
 
-    def private_handler(self, message_dict):
+    def private_receiver(self, message_dict):
         sender = message_dict.get("sender")
-        selected_user = self.window.selected_user
         wx.CallAfter(
-            self.window.add_record,
+            self.window.add_record_sizer,
             sender, message_dict.get("ext_data")
-        )
-        wx.CallAfter(
-            self.window.refresh_chat_records,
-            selected_user
-        )
-        wx.CallAfter(
-            self.window.refresh_unread_tip
         )
 
 
