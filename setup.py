@@ -27,7 +27,7 @@ setup(
     version="0.0.1",
     description="client for simple-chat",
     url="https://github.com/forgetIt/simple-chat.git",
-    packages=["client", "client/views"],
+    packages=["client", "client.views"],
     install_requires=["wxPython==3.0.2"],
     platforms=["ubuntu"],
     author="zdd",
