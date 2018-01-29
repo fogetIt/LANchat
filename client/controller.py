@@ -66,6 +66,7 @@ class Service(RecordStore, Views):
     def refresh_user_list_box(self, users):
         self.update_users(users)
         self.user_list_box.Clear()
+        self.user_list_box.Insert("group", 0)
         for user in self.user_record_dict.keys():
             self.user_list_box.Append(user)
 

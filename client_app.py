@@ -49,7 +49,7 @@ class REPL(Thread):
                 message = self.window.client.recv(BUFFER_SIZE)
                 try:
                     message_dict = json.loads(message)
-                    REPL.__dict__.get("%s_receiver" % message_dict.get("title"))
+                    REPL.__dict__.get("%s_receiver" % message_dict.get("title"))(self, message_dict)
                 except Exception as e:
                     self.window.show_tip(
                         u"数据格式错误：%s" % (message)
