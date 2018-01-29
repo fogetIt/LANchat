@@ -63,7 +63,7 @@ class Service(RecordStore, Views):
         for user in self.users_set:
             self.unread_list_box.Append(user)
 
-    def create_record_sizer(self, user, value, is_self=True):
+    def add_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
         record.SetFont(FONT12)
         if is_self:
@@ -142,9 +142,9 @@ class Controller(Service, MessageSender):
                 self.show_tip(u"群聊为空")
             else:
                 self.group(value)
-                self.create_record_sizer("group", value)
+                self.add_record_sizer("group", value)
                 self.refresh_record_panel(self.selected_user)
         else:
             self.private(value, self.selected_user)
-            self.create_record_sizer(self.selected_user, value)
+            self.add_record_sizer(self.selected_user, value)
             self.refresh_record_panel(self.selected_user)
