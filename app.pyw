@@ -19,8 +19,9 @@ class GUI(Thread, Controller):
 
 class MessageReceiver(Client):
 
-    def __init__(self):
+    def __init__(self, window):
         super(MessageReceiver, self).__init__()
+        # self.window = window
         self.window = Controller()
 
     def private_receiver(self, message_dict):
@@ -42,8 +43,7 @@ class REPL(Thread, MessageReceiver):
 
     def __init__(self, window):
         Thread.__init__(self)
-        MessageReceiver.__init__(self)
-        self.window = window
+        MessageReceiver.__init__(self, window)
 
     def run(self):
         while True:

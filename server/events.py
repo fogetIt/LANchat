@@ -20,7 +20,7 @@ def create_message(sender=None, title=None, ext_data=None):
 group_message = partial(create_message, title="group")
 private_message = partial(create_message, title="private")
 error_message = partial(create_message, title="error", sender="system")
-user_list_message = partial(create_message, title="user_list", sender="system", ext_data=app.user_list)
+users_message = partial(create_message, title="users", sender="system", ext_data=app.user_list)
 
 
 class Events(object):
@@ -28,7 +28,7 @@ class Events(object):
     def close_client(self, client_socket):
         result = app.remove_client(client_socket=client_socket)
         if result:
-            app.broadcast(user_list_message())
+            app.broadcast(users_message())
 
     @app.route("login")
     def login(self, message_dict, client_socket):
@@ -40,7 +40,7 @@ class Events(object):
                 error_message(ext_data=result), client_socket
             )
         else:
-            app.broadcast(user_list_message())
+            app.broadcast(users_message())
             app.logger.info("{user_name} login successful".format(user_name=user_name))
 
     @app.route("logout")
