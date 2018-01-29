@@ -60,8 +60,14 @@ class Service(RecordStore, Views):
 
     def __reset_unread_list_box(self):
         self.unread_list_box.Clear()
-        for user in self.users_set:
+        for user in self.users:
             self.unread_list_box.Append(user)
+
+    def refresh_user_list_box(self, users):
+        self.update_users(users)
+        self.user_list_box.Clear()
+        for user in self.user_record_dict.keys():
+            self.user_list_box.Append(user)
 
     def add_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
@@ -138,7 +144,7 @@ class Controller(Service, MessageSender):
         elif not self.selected_user:
             self.show_tip(u"未选择用户")
         elif self.selected_user == "group":
-            if not self.users_set:
+            if not self.users:
                 self.show_tip(u"群聊为空")
             else:
                 self.group(value)

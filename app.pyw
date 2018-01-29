@@ -36,8 +36,8 @@ class REPL(Thread, Client):
     def error_receiver(self, message_dict):
         wx.CallAfter(self.window.show_tip, message_dict.get("ext_data"))
 
-    def user_list_receiver(self, message_dict):
-        users = message_dict.get("users")
+    def users_receiver(self, message_dict):
+        wx.CallAfter(self.window.refresh_user_list_box, message_dict.get("users"))
 
     def run(self):
         while True:

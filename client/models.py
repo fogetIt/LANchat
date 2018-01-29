@@ -30,7 +30,6 @@ class RecordStore(Single):
         self.selected_user = u""
         self.max_size = 100
         self.user_record_dict = {}
-        self.users_set = set()
         self.unread_set = set()
         self.number_icons = StaticListDict(
             [u"⓿", u"➊", u"➋", u"➌", u"➍", u"➎", u"➏", u"➐", u"➑", u"➒", u"➓", u"∞"]
@@ -38,12 +37,13 @@ class RecordStore(Single):
 
     def add_record(self, user, record):
         self.__add_unread_set(user)
-        record_list = self.user_record_dict.get(user)
-        if not record_list:
-            self.user_record_dict.update({user: []})
-        elif len(record_list) >= self.max_size:
-            record_list.pop(0, None)
-        record_list.append(record)
+        try:
+            record_list = self.user_record_dict.get(user)
+            if len(record_list) >= self.max_size:
+                record_list.pop(0)
+            record_list.append(record)
+        except Exception as e:
+            print(e)
 
     def reduce_record(self, user):
         self.__reduce_unread_set(user)
@@ -68,3 +68,17 @@ class RecordStore(Single):
         if i >= len(self.number_icons):
             i = len(self.number_icons) - 1
         return self.number_icons.get(i)
+
+    @property
+    def users(self):
+        return self.user_record_dict.keys()
+
+    def update_users(self, users):
+        old_users = set(self.users)
+        new_users = set(users)
+        diff_old = old_users - new_users
+        diff_new = new_users - old_users
+        for user in diff_old:
+            self.reduce_record(user)
+        for user in diff_new:
+            self.user_record_dict.update({user: []})
