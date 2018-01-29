@@ -32,5 +32,5 @@ setup(
     platforms=["ubuntu"],
     author="zdd",
     author_email = "2271404280@qq.com",
-    py_modules=['app.pyw']
+    py_modules=['app']
 )
