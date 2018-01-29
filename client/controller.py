@@ -60,7 +60,7 @@ class Service(RecordStore, Views):
 
     def __reset_unread_list_box(self):
         self.unread_list_box.Clear()
-        for user in self.users:
+        for user in self.unread_set:
             self.unread_list_box.Append(user)
 
     def refresh_user_list_box(self, users):
