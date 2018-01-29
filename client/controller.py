@@ -2,7 +2,6 @@
 # @Date:   2018-01-28 20:00:25
 # @Last Modified time: 2018-01-28 20:00:32
 import json
-import wx.lib.scrolledpanel as scrolled
 from client import (
     wx, StaticTextCtrl, Client, FONT12, COLOR_RED, COLOR_BLUE
 )

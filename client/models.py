@@ -9,15 +9,15 @@ class RecordStore(Single):
     def __init__(self):
         self.max_size = 100
         self.user_record_dict = {}
-        self.user_unread_dict = {}
         self.selected_user = u""
-        self.user_list = []
+        self.users_set = set()
+        self.unread_set = set()
         self.number_icons = StaticListDict(
             [u"⓿", u"➊", u"➋", u"➌", u"➍", u"➎", u"➏", u"➐", u"➑", u"➒", u"➓", u"∞"]
         )
 
     def add_record(self, user, record):
-        self.add_unread_num(user)
+        self.add_unread_set(user)
         record_list = self.user_record_dict.get(user)
         if not record_list:
             self.user_record_dict.update({user: []})
@@ -26,26 +26,24 @@ class RecordStore(Single):
         record_list.append(record)
 
     def reduce_record(self, user):
-        self.reduce_unread_num(user)
-        if not self.user_unread_dict.get(user):
+        self.reduce_unread_set(user)
+        if user not in self.unread_set:
             self.user_record_dict.pop(user, None)
 
     def get_record(self, user):
         return self.user_record_dict.get(user)
 
-    def get_unread_num(self, user):
-        return int(self.user_unread_dict.get(user, 0))
+    def get_unread_num(self):
+        return len(self.unread_set)
 
-    def add_unread_num(self, user):
+    def add_unread_set(self, user):
         if user != self.selected_user:
-            self.user_unread_dict.update({user: self.get_record(user) + 1})
+            self.unread_set.add(user)
 
-    def reduce_unread_num(self, user):
-        if user == self.selected_user:
-            if user not in self.user_list:
-                self.user_unread_dict.pop(user, None)
-            else:
-                self.user_unread_dict.update({user: 0})
+    def reduce_unread_set(self, user):
+        if user in self.unread_set:
+            if user == self.selected_user:
+                self.unread_set.remove(user)
 
     def get_icon(self, i):
         if i >= len(self.number_icons):
