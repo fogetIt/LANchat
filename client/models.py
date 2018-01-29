@@ -37,13 +37,12 @@ class RecordStore(Single):
 
     def add_record(self, user, record):
         self.__add_unread_set(user)
-        try:
-            record_list = self.user_record_dict.get(user)
-            if len(record_list) >= self.max_size:
-                record_list.pop(0)
-            record_list.append(record)
-        except Exception as e:
-            print(e)
+        record_list = self.user_record_dict.get(user)
+        if not record_list:
+            self.user_record_dict.update({user: []})
+        elif len(record_list) >= self.max_size:
+            record_list.pop(0)
+        record_list.append(record)
 
     def reduce_record(self, user):
         self.__reduce_unread_set(user)
