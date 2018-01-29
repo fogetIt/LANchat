@@ -3,7 +3,7 @@
 # @Last Modified time: 2017-11-21 11:07:43
 import select
 from threading import Thread
-from server import app, error_message, PORT, SELECT_TIMEOUT
+from server import app, PORT, SELECT_TIMEOUT
 
 
 class AcceptClient(Thread):
@@ -26,7 +26,7 @@ class AcceptClient(Thread):
                 if not view:
                     app.logger.error("message title error")
                     app.send_message(
-                        error_message(ext_data="message title error!"),
+                        app.error_message(ext_data="message title error!"),
                         client_socket,
                         receiver="loginer"
                     )
@@ -50,7 +50,7 @@ class TransmitData(Thread):
                     if not sender:
                         app.logger.error("{sender} is not online".format(sender=sender))
                         app.send_message(
-                            error_message(ext_data="you are offline, please restart client!"),
+                            app.error_message(ext_data="you are offline, please restart client!"),
                             client_socket
                         )
                     else:
@@ -58,7 +58,7 @@ class TransmitData(Thread):
                         if not view:
                             app.logger.error("message title error")
                             app.send_message(
-                                error_message(ext_data="message title error!"),
+                                app.error_message(ext_data="message title error!"),
                                 client_socket
                             )
                         else:

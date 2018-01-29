@@ -16,6 +16,25 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         ServerSocket.__init__(self)
         ClientStore.__init__(self)
 
+    def create_message(self, sender=None, title=None, ext_data=None):
+        if not sender or not title or not ext_data:
+            return None
+        message_dict = {"title": title, "sender": sender}
+        message_dict.update(ext_data=ext_data)
+        return json.dumps(message_dict)
+
+    def group_message(self, sender=None, ext_data=None):
+        return self.create_message(sender=sender, title="group", ext_data=ext_data)
+
+    def private_message(self, sender=None, ext_data=None):
+        return self.create_message(sender=sender, title="private", ext_data=ext_data)
+
+    def error_message(self, ext_data=None):
+        return self.create_message(sender="system", title="error", ext_data=ext_data)
+
+    def users_message(self):
+        return self.create_message(sender="system", title="error", ext_data=self.users)
+
     def send_message(self, message, receiver_socket, receiver=None):
         if not message:
             self.logger.error("message empty error")
@@ -29,10 +48,7 @@ class ChartServer(Logger, ServerSocket, ClientStore):
                 return True
             except Exception as e:
                 self.logger.error(e)
-                self.remove_client(
-                    user_name=receiver,
-                    client_socket=receiver_socket
-                )
+                self.close_client(receiver_socket)
         return False
 
     def broadcast(self, message, sender="system", sender_socket=None):
@@ -47,6 +63,12 @@ class ChartServer(Logger, ServerSocket, ClientStore):
                         failed += 1
         return success, failed
 
+    def close_client(self, client_socket):
+        client_socket.close()
+        result = self.remove_client(client_socket=client_socket)
+        if result:
+            self.broadcast(self.users_message())
+
 
 class App(ChartServer, RouterMap):
 
@@ -55,17 +77,23 @@ class App(ChartServer, RouterMap):
         RouterMap.__init__(self)
 
     def parser(self, client_socket):
-        message = client_socket.recv(BUFFER_SIZE)
-        if not message:
-            self.logger.error("socket error")
-            self.remove_client(client_socket=client_socket)
+        try:
+            message = client_socket.recv(BUFFER_SIZE)
+            if not message:
+                self.logger.error("socket error")
+                self.close_client(client_socket)
+                return None
+            else:
+                try:
+                    return json.loads(message)
+                except Exception as e:
+                    print(e)
+                    self.logger.error("message formatting error")
+        except Exception as e:
+            self.logger.error(e)
+            self.close_client(client_socket)
             return None
-        else:
-            try:
-                return json.loads(message)
-            except Exception as e:
-                print(e)
-                self.logger.error("message formatting error")
+
 
     def route(self, title):
         """
