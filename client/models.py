@@ -48,7 +48,7 @@ class RecordStore(Single):
 
     def reduce_record(self, user):
         self.__reduce_unread_set(user)
-        if user not in self.unread_set:
+        if user not in self.unread_set and user not in self.users:
             self.user_record_dict.pop(user, None)
 
     def get_record(self, user):
