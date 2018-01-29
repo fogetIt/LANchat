@@ -13,10 +13,13 @@
     + include
         * [client/](./client)
         * [setup.py](./setup.py)
-        * [app.pyw](app.pyw)
+        * [app.pyw](client_app.py)
     + run
         ```shell
         pip install git+https://github.com/fogetIt/simple-chat.git
+        # pip uninstall simple_chat_client
+        from client_app import main
+        main(host, port)
         ```
 
 <!--use setup.py

@@ -23,12 +23,12 @@ else:
 
 
 setup(
-    name="simple-chat client",
+    name="simple chat client",
     version="0.0.1",
     description="client for simple-chat",
     url="https://github.com/forgetIt/simple-chat.git",
     packages=["client", "client.views"],
-    py_modules=["app"],
+    py_modules=["client_app"],
     install_requires=["wxPython==3.0.2"],
     platforms=["ubuntu"],
     author="zdd",
