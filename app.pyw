@@ -30,6 +30,16 @@ class MessageReceiver(Client):
             sender, message_dict.get("ext_data")
         )
 
+    group_receiver = private_receiver
+
+    def error_receiver(self, message_dict):
+        wx.CallAfter(
+            self.window.show_tip(message_dict.get("ext_data"))
+        )
+
+    def user_list_receiver(self, message_dict):
+        pass
+
 
 class REPL(Thread, MessageReceiver):
 
@@ -64,4 +74,4 @@ def main(host, port):
 
 
 if __name__ == '__main__':
-    main("", 8888)
+    main("127.0.0.1", 8888)
