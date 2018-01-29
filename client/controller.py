@@ -41,7 +41,7 @@ class MessageSender(Client):
         )
 
 
-class Service(RecordStore, Views):
+class Service(RecordStore, Views, Client):
 
     def __init__(self):
         Views.__init__(self)
@@ -68,7 +68,8 @@ class Service(RecordStore, Views):
         self.user_list_box.Clear()
         self.user_list_box.Insert("group", 0)
         for user in self.user_record_dict.keys():
-            self.user_list_box.Append(user)
+            if user != self.user_name:
+                self.user_list_box.Append(user)
 
     def add_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
