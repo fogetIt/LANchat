@@ -12,6 +12,7 @@ class GUI(Thread, Controller):
         Thread.__init__(self)
         Controller.__init__(self)
         self.login(host, port)
+        self.Show(True)  # TODO == MainFrame().Show()
 
     def run(self):
         Controller.app.MainLoop()

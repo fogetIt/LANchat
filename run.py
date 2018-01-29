@@ -31,7 +31,7 @@ class AcceptClient(Thread):
                         receiver="loginer"
                     )
                 else:
-                    view(self, message_dict, client_socket)
+                    view(message_dict, client_socket)
 
 
 class TransmitData(Thread):

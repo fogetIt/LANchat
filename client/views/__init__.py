@@ -26,4 +26,3 @@ class Views(wx.Frame, Layout):
         self.panel = wx.Panel(parent=self, id=1)
         Layout.__init__(self, self.panel)
         self.panel.SetSizer(self.main_sizer)
-        self.Show(True)  # TODO == MainFrame().Show()

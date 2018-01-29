@@ -66,11 +66,12 @@ class App(ChartServer, RouterMap):
         message = self.receive_message(client_socket=client_socket)
         if not message:
             self.logger.error("socket error")
-        try:
-            return json.loads(message)
-        except Exception as e:
-            print(e)
-            self.logger.error("message formatting error")
+        else:
+            try:
+                return json.loads(message)
+            except Exception as e:
+                print(e)
+                self.logger.error("message formatting error")
         return None
 
     def route(self, title):
