@@ -99,7 +99,6 @@ class UnreadTip(Single):
         )
         self.unread_list_box.SetFont(FONT11)
         self.unread_list_box.SetForegroundColour(COLOR_RED)
-        self.unread_list_box.Append("藏族自治州藏族自增长")
 
         self.unread_sizer.Add(self.unread_list_box, proportion=10, border=10, flag=wx.EXPAND | wx.ALL)
         self.unread_sizer.Fit(self.unread_tip)
