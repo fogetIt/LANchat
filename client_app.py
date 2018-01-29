@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-25 17:00:02
 # @Last Modified time: 2018-01-25 17:00:22
+import sys
 import json
 from threading import Thread
-from client import wx, BUFFER_SIZE, Controller, Client
+from client import wx, BUFFER_SIZE, Controller
+
+
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 
 class GUI(Thread, Controller):

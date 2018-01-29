@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-23 10:53:20
 # @Last Modified time: 2018-01-23 10:53:26
-import sys
 import platform
 from subprocess import Popen
 from setuptools import setup
