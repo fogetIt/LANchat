@@ -7,19 +7,15 @@ from subprocess import Popen
 from setuptools import setup
 
 
-if platform.version().lower().find("ubuntu") != -1:
+if platform.platform().lower().find("ubuntu") != -1:
     Popen([
         "/bin/bash", "-c",
         """
-        python -c 'import wx; exit()' || (
-            apt-get install python-wxtools -y
-            python %s
-        )
-        """ % sys.argv[0]
+        python -c 'import wx; exit()' || apt-get install python-wxtools -y
+        """
     ]).wait()
-else:
-    print("error: please install wxPython in your system")
-    exit(1)
+elif platform.platform().lower().find("win") != -1:
+    Popen("pip install -U wxPython").wait()
 
 
 setup(
