@@ -7,9 +7,9 @@ from client import Single, StaticListDict
 class RecordStore(Single):
 
     def __init__(self):
+        self.selected_user = u""
         self.max_size = 100
         self.user_record_dict = {}
-        self.selected_user = u""
         self.users_set = set()
         self.unread_set = set()
         self.number_icons = StaticListDict(
@@ -33,9 +33,6 @@ class RecordStore(Single):
     def get_record(self, user):
         return self.user_record_dict.get(user)
 
-    def get_unread_num(self):
-        return len(self.unread_set)
-
     def add_unread_set(self, user):
         if user != self.selected_user:
             self.unread_set.add(user)
@@ -45,10 +42,13 @@ class RecordStore(Single):
             if user == self.selected_user:
                 self.unread_set.remove(user)
 
-    def get_icon(self, i):
+    @property
+    def unread_num(self):
+        return len(self.unread_set)
+
+    @property
+    def icon(self):
+        i = self.unread_num
         if i >= len(self.number_icons):
             i = len(self.number_icons) - 1
         return self.number_icons.get(i)
-
-    def get_icon_num(self, icon):
-        return self.number_icons.inv_get(icon)

@@ -124,7 +124,7 @@ class Controller(Service, MessageSender):
         elif not self.selected_user:
             self.show_tip(u"未选择用户")
         elif self.selected_user == "group":
-            if not self.user_list:
+            if not self.users_set:
                 self.show_tip(u"群聊为空")
             else:
                 self.group(value)
