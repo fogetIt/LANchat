@@ -79,19 +79,19 @@ class Service(RecordStore, Views):
         self.__refresh_notice_icon()
         self.__reset_unread_list_box()
 
-    def refresh_record_panel(self, user):
+    def refresh_record_panel(self):
         """
         Destroy record_panel's sub object, and try to reduce record.
         self.record_panel.RemoveChild()  # 销毁后的子对象，不能再 Add()
         """
         self.record_panel.DestroyChildren()
         self.record_sizer.Clear(deleteWindows=False)
-        unread_num, record_list = self.get_record(user)
+        unread_num, record_list = self.get_record(self.selected_user)
         if record_list:
             for i in record_list:
                 i.Show()
             self.record_panel.SetupScrolling()
-        self.reduce_record(user)
+        self.reduce_record(self.selected_user)
         self.__refresh_notice_icon()
         self.__reset_unread_list_box()
 
@@ -118,7 +118,7 @@ class Controller(Service, MessageSender):
             n = self.user_list_box.GetSelection()
             if n != -1:
                 self.reset_selected_user(self.user_list_box.GetStringSelection())
-                self.refresh_record_panel(self.selected_user)
+                self.refresh_record_panel()
 
     def click_unread_list_event(self, e):
         if self.unread_list_box.GetItems():
@@ -126,7 +126,7 @@ class Controller(Service, MessageSender):
             if n != -1:
                 self.reset_selected_user(self.unread_list_box.GetStringSelection())
                 self.close_unread_tip()
-                self.refresh_record_panel(self.selected_user)
+                self.refresh_record_panel()
 
     def click_notice_event(self, e):
         self.show_unread_tip()
@@ -143,8 +143,8 @@ class Controller(Service, MessageSender):
             else:
                 self.group(value)
                 self.add_record_sizer("group", value)
-                self.refresh_record_panel(self.selected_user)
+                self.refresh_record_panel()
         else:
             self.private(value, self.selected_user)
             self.add_record_sizer(self.selected_user, value)
-            self.refresh_record_panel(self.selected_user)
+            self.refresh_record_panel()
