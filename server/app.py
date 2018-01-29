@@ -33,7 +33,7 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         return self.create_message(sender="system", title="error", ext_data=ext_data)
 
     def users_message(self):
-        return self.create_message(sender="system", title="error", ext_data=self.users)
+        return self.create_message(sender="system", title="users", ext_data=self.users)
 
     def send_message(self, message, receiver_socket, receiver=None):
         if not message:
