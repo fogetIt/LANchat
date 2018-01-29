@@ -65,9 +65,8 @@ class ChartServer(Logger, ServerSocket, ClientStore):
 
     def close_client(self, client_socket):
         client_socket.close()
-        result = self.remove_client(client_socket=client_socket)
-        if result:
-            self.broadcast(self.users_message())
+        self.remove_client(client_socket=client_socket)
+        self.broadcast(self.users_message())
 
 
 class App(ChartServer, RouterMap):
