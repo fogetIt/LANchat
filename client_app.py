@@ -18,11 +18,10 @@ class GUI(Thread, Controller):
         Controller.app.MainLoop()
 
 
-class REPL(Thread, Client):
+class REPL(Thread):
 
     def __init__(self, window):
         Thread.__init__(self)
-        Client.__init__(self)
         self.window = window
 
     def private_receiver(self, message_dict):
@@ -42,7 +41,7 @@ class REPL(Thread, Client):
     def run(self):
         while True:
             try:
-                message = self.client.recv(BUFFER_SIZE)
+                message = self.window.client.recv(BUFFER_SIZE)
                 try:
                     message_dict = json.loads(message)
                     REPL.__dict__.get("%s_receiver" % message_dict.get("title"))
@@ -51,6 +50,7 @@ class REPL(Thread, Client):
                         u"数据格式错误：%s" % (message)
                     )
             except Exception as e:
+                print(e)
                 self.window.show_tip(e)
                 # break
 

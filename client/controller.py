@@ -92,7 +92,7 @@ class Service(RecordStore, Views):
         """
         self.record_panel.DestroyChildren()
         self.record_sizer.Clear(deleteWindows=False)
-        unread_num, record_list = self.get_record(self.selected_user)
+        record_list = self.get_record(self.selected_user)
         if record_list:
             for i in record_list:
                 i.Show()
