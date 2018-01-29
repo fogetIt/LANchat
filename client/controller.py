@@ -3,7 +3,7 @@
 # @Last Modified time: 2018-01-28 20:00:32
 import json
 from client import (
-    wx, StaticTextCtrl, Client, FONT12, COLOR_RED, COLOR_BLUE
+    wx, StaticTextCtrl, Client, font, COLOR_RED, COLOR_BLUE
 )
 from .models import RecordStore
 from .views import Views
@@ -71,7 +71,7 @@ class Service(RecordStore, Views):
 
     def add_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
-        record.SetFont(FONT12)
+        record.SetFont(font(12))
         if is_self:
             self.record_sizer.Add(
                 record, proportion=0, border=150, flag=wx.EXPAND | wx.LEFT

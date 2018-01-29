@@ -20,10 +20,6 @@ def font(size):
         weight=wx.BOLD
     )
 
-FONT11 = font(11)
-FONT12 = font(12)
-FONT13 = font(13)
-
 
 class Single(object):
 

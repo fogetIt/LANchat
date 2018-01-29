@@ -2,7 +2,7 @@
 # @Last Modified time: 2018-01-24 21:21:12
 import wx.lib.scrolledpanel as scrolled
 from client import (
-    wx, Single, FONT11, FONT12, FONT13, COLOR_BLUE, COLOR_RED, COLOR_WHITE, COLOR_GREEN
+    wx, Single, font, COLOR_BLUE, COLOR_RED, COLOR_WHITE, COLOR_GREEN
 )
 
 
@@ -12,7 +12,7 @@ class UserListBox(Single):
         self.user_list_box = wx.ListBox(
             parent=panel, id=11, name='user_list', choices=[], style=wx.LB_SINGLE
         )
-        self.user_list_box.SetFont(FONT12)
+        self.user_list_box.SetFont(font(12))
         self.user_list_box.SetForegroundColour(COLOR_WHITE)
         self.user_list_box.SetBackgroundColour(COLOR_GREEN)
         self.user_list_box.Insert("group", 0)
@@ -24,7 +24,7 @@ class UserNameText(Single):
         self.user_name_text = wx.StaticText(
             parent=panel, id=12, size=(0, 30), label="", style=wx.ALIGN_CENTER
         )
-        self.user_name_text.SetFont(FONT13)
+        self.user_name_text.SetFont(font(13))
         self.user_name_text.SetForegroundColour(COLOR_BLUE)
 
 
@@ -35,7 +35,7 @@ class NoticeButton(Single):
         self.notice_button = wx.Button(
             parent=panel, id=13, size=(0, 30), label=u"⓿", style=wx.ALIGN_LEFT
         )
-        self.notice_button.SetFont(FONT13)
+        self.notice_button.SetFont(font(13))
         self.notice_button.SetForegroundColour(COLOR_BLUE)
 
 
@@ -55,7 +55,7 @@ class InputField(Single):
         self.input_field = wx.TextCtrl(
             parent=panel, id=15, value="", style=wx.TE_MULTILINE | wx.TE_RICH2
         )
-        self.input_field.SetFont(FONT12)
+        self.input_field.SetFont(font(12))
 
 
 class SendButton(Single):
@@ -64,7 +64,7 @@ class SendButton(Single):
         self.send_button = wx.Button(
             parent=panel, id=16, size=(0, 40), label=u"发送"
         )
-        self.send_button.SetFont(FONT13)
+        self.send_button.SetFont(font(13))
 
 
 class Tip(Single):
@@ -97,7 +97,7 @@ class UnreadTip(Single):
         self.unread_list_box = wx.ListBox(
             parent=self.unread_tip, id=21, name='unread_list', choices=[], style=wx.LB_SINGLE
         )
-        self.unread_list_box.SetFont(FONT11)
+        self.unread_list_box.SetFont(font(11))
         self.unread_list_box.SetForegroundColour(COLOR_RED)
 
         self.unread_sizer.Add(self.unread_list_box, proportion=10, border=10, flag=wx.EXPAND | wx.ALL)
