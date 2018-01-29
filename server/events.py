@@ -10,7 +10,7 @@ app = App()
 @app.route("login")
 def login(message_dict, client_socket):
     user_name = message_dict.get("name")
-    result = app.add_client(user_name=user_name, client_socket=client_socket)
+    result = app.add_client(user_name, client_socket)
     if result:
         app.logger.warning(result)
         app.send_message(
