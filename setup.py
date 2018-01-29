@@ -25,7 +25,7 @@ setup(
     url="https://github.com/forgetIt/simple-chat.git",
     packages=["client", "client.views"],
     py_modules=["client_app"],
-    install_requires=["wxPython==3.0.2"],
+    install_requires=["wxPython>=3.0.2"],
     platforms=["ubuntu"],
     author="zdd",
     author_email = "2271404280@qq.com",
