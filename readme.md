@@ -16,7 +16,7 @@
         * [app.pyw](./app.pyw)
     + run
         ```shell
-        pip install git+https://github.com/forgetIt/simple-chat.git
+        pip install git+https://github.com/fogetIt/simple-chat.git
         ```
 
 <!--use setup.py

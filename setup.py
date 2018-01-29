@@ -27,10 +27,10 @@ setup(
     version="0.0.1",
     description="client for simple-chat",
     url="https://github.com/forgetIt/simple-chat.git",
-    packages=["client"],
+    packages=["client", "client/views"],
     install_requires=["wxPython==3.0.2"],
     platforms=["ubuntu"],
     author="zdd",
     author_email = "2271404280@qq.com",
-    py_modules=['app']
+    py_modules=['app.pyw']
 )
