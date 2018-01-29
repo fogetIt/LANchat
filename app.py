@@ -22,8 +22,7 @@ class REPL(Thread, Client):
     def __init__(self, window):
         Thread.__init__(self)
         Client.__init__(self)
-        # self.window = window
-        self.window = Controller()
+        self.window = window
 
     def private_receiver(self, message_dict):
         sender = message_dict.get("sender")
