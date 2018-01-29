@@ -47,7 +47,7 @@ class RecordStore(Single):
         return len(self.unread_set)
 
     @property
-    def icon(self):
+    def notice_icon(self):
         i = self.unread_num
         if i >= len(self.number_icons):
             i = len(self.number_icons) - 1

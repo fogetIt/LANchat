@@ -47,8 +47,9 @@ class Service(RecordStore, Views):
         Views.__init__(self)
         RecordStore.__init__(self)
 
-    def refresh_user_list_box(self, user_list):
-        self.unread_list_box.Append("")
+    def add_unread_list_box(self):
+        for user in self.users_set:
+            self.unread_list_box.Append(user)
 
     def create_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
@@ -78,13 +79,12 @@ class Service(RecordStore, Views):
             self.record_panel.SetupScrolling()
         self.reduce_record(user)
 
-    def refresh_notice_icon(self, i):
-        label = self.get_icon(i)
-        if label == u"⓿":
+    def refresh_notice_icon(self):
+        if self.notice_icon == u"⓿":
             self.notice_button.SetForegroundColour(COLOR_BLUE)
         else:
             self.notice_button.SetForegroundColour(COLOR_RED)
-        self.notice_button.SetLabel(label)
+        self.notice_button.SetLabel(self.notice_icon)
 
 
 class Controller(Service, MessageSender):
