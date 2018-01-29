@@ -41,10 +41,8 @@ class TransmitData(Thread):
 
     def run(self):
         while True:
-            socket_list = [tcp_socket for tcp_socket in app.socket_iterator]  # 阻塞，等待数据输入
-            r_list, w_list, x_list = select.select(
-                socket_list, [], [], SELECT_TIMEOUT
-            )
+            # 阻塞，等待数据输入
+            r_list, w_list, x_list = select.select(app.socket_iterator, [], [], SELECT_TIMEOUT)
             for client_socket in r_list:
                 message_dict = app.parser(client_socket)
                 if message_dict:

@@ -53,6 +53,7 @@ class ServerSocket(Single):
         self.server_socket.settimeout(SERVER_TIMEOUT)
         self.server_socket.bind(("0.0.0.0", PORT))
         self.server_socket.listen(LISTEN_NUMBER)
+        self.server_socket.setblocking(1)  # blocking default 1
 
 
 class RouterMap(Single):
