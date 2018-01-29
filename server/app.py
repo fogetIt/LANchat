@@ -47,14 +47,6 @@ class ChartServer(Logger, ServerSocket, ClientStore):
                         failed += 1
         return success, failed
 
-    def receive_message(self, client_socket):
-        try:
-            return client_socket.recv(BUFFER_SIZE)
-        except Exception as e:
-            self.logger.error(e)
-            self.remove_client(client_socket=client_socket)
-        return False
-
 
 class App(ChartServer, RouterMap):
 
@@ -63,16 +55,17 @@ class App(ChartServer, RouterMap):
         RouterMap.__init__(self)
 
     def parser(self, client_socket):
-        message = self.receive_message(client_socket=client_socket)
+        message = client_socket.recv(BUFFER_SIZE)
         if not message:
             self.logger.error("socket error")
+            self.remove_client(client_socket=client_socket)
+            return None
         else:
             try:
                 return json.loads(message)
             except Exception as e:
                 print(e)
                 self.logger.error("message formatting error")
-        return None
 
     def route(self, title):
         """
