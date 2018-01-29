@@ -60,24 +60,4 @@ class StaticTextCtrl(wx.TextCtrl):
             self.SetBackgroundColour(parent.BackgroundColour)
 
 
-class StaticListDict(tuple):
-
-    def __init__(self, seq=()):
-        super(StaticListDict, self).__init__(set(seq))
-
-    def get(self, i):
-        try:
-            return None if i < 0 else self.__getitem__(i)
-        except Exception as e:
-            print(e)
-            return None
-
-    def inv_get(self, value):
-        try:
-            return self.index(value)
-        except Exception as e:
-            print(e)
-            return None
-
-
 from .controller import Controller

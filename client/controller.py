@@ -51,14 +51,14 @@ class Service(RecordStore, Views):
         self.selected_user = user
         self.user_name_text.SetLabel(self.selected_user)
 
-    def refresh_notice_icon(self):
+    def __refresh_notice_icon(self):
         if self.notice_icon == u"⓿":
             self.notice_button.SetForegroundColour(COLOR_BLUE)
         else:
             self.notice_button.SetForegroundColour(COLOR_RED)
         self.notice_button.SetLabel(self.notice_icon)
 
-    def reset_unread_list_box(self):
+    def __reset_unread_list_box(self):
         self.unread_list_box.Clear()
         for user in self.users_set:
             self.unread_list_box.Append(user)
@@ -76,8 +76,8 @@ class Service(RecordStore, Views):
             )
         record.Hide()
         self.add_record(user, record)
-        self.refresh_notice_icon()
-        self.reset_unread_list_box()
+        self.__refresh_notice_icon()
+        self.__reset_unread_list_box()
 
     def refresh_record_panel(self, user):
         """
@@ -92,8 +92,8 @@ class Service(RecordStore, Views):
                 i.Show()
             self.record_panel.SetupScrolling()
         self.reduce_record(user)
-        self.refresh_notice_icon()
-        self.reset_unread_list_box()
+        self.__refresh_notice_icon()
+        self.__reset_unread_list_box()
 
 
 class Controller(Service, MessageSender):
@@ -103,9 +103,9 @@ class Controller(Service, MessageSender):
         Service.__init__(self)
         MessageSender.__init__(self)
         self.Bind(wx.EVT_CLOSE, self.close_window_event)
-        self.user_list_box.Bind(wx.EVT_LEFT_UP, self.choose_user_list_event)
-        self.unread_list_box.Bind(wx.EVT_LEFT_UP, self.choose_unread_list_event)
-        self.notice_button.Bind(wx.EVT_BUTTON, self.get_notice_event)
+        self.user_list_box.Bind(wx.EVT_LEFT_UP, self.click_user_list_event)
+        self.unread_list_box.Bind(wx.EVT_LEFT_UP, self.click_unread_list_event)
+        self.notice_button.Bind(wx.EVT_BUTTON, self.click_notice_event)
         self.send_button.Bind(wx.EVT_BUTTON, self.send_message_event)
 
     def close_window_event(self, e):
@@ -113,25 +113,23 @@ class Controller(Service, MessageSender):
         Controller.app.Destroy()  # TODO  noticing
         wx.Exit()                 # TODO  better than exit(0)
 
-    def choose_user_list_event(self, e):
+    def click_user_list_event(self, e):
         if self.user_list_box.GetItems():
             n = self.user_list_box.GetSelection()
             if n != -1:
                 self.reset_selected_user(self.user_list_box.GetStringSelection())
                 self.refresh_record_panel(self.selected_user)
 
-    def choose_unread_list_event(self, e):
+    def click_unread_list_event(self, e):
         if self.unread_list_box.GetItems():
             n = self.unread_list_box.GetSelection()
             if n != -1:
-                self.reset_selected_user(self.user_list_box.GetStringSelection())
+                self.reset_selected_user(self.unread_list_box.GetStringSelection())
+                self.close_unread_tip()
                 self.refresh_record_panel(self.selected_user)
 
-    def get_notice_event(self, e):
-        """
-        show unread list dialog
-        """
-        pass
+    def click_notice_event(self, e):
+        self.show_unread_tip()
 
     def send_message_event(self, e):
         value = self.input_field.GetValue().strip()

@@ -105,6 +105,10 @@ class UnreadTip(Single):
 
     def show_unread_tip(self):
         self.unread_tip.ShowModal()
+        self.unread_tip.Close()
+
+    def close_unread_tip(self):
+        self.unread_tip.Close()
 
 
 class Components(UserListBox, NoticeButton, UserNameText, RecordPanel, InputField, SendButton, Tip, UnreadTip):
