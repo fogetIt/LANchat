@@ -13,7 +13,7 @@
     + include
         * [client/](./client)
         * [setup.py](./setup.py)
-        * [app.pyw](app.py)
+        * [app.pyw](app.pyw)
     + run
         ```shell
         pip install git+https://github.com/fogetIt/simple-chat.git
