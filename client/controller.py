@@ -91,9 +91,11 @@ class Service(RecordStore, Views, Client):
         """
         Destroy record_panel's sub object, and try to reduce record.
         self.record_panel.RemoveChild()  # 销毁后的子对象，不能再 Add()
-        """
         self.record_panel.DestroyChildren()
         self.record_sizer.Clear(deleteWindows=False)
+        """
+        for i in self.record_panel.GetChildren():
+            i.Hide()
         record_list = self.get_record(self.selected_user)
         if record_list:
             for i in record_list:

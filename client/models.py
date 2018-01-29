@@ -38,11 +38,7 @@ class RecordStore(Single):
     def add_record(self, user, record):
         self.__add_unread_set(user)
         record_list = self.user_record_dict.get(user)
-        print(self.user_record_dict)
-        print(record_list)
-        if not record_list:
-            self.user_record_dict.update({user: []})
-        elif len(record_list) >= self.max_size:
+        if len(record_list) >= self.max_size:
             record_list.pop(0)
         record_list.append(record)
 
