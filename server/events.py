@@ -20,7 +20,7 @@ def create_message(sender=None, title=None, ext_data=None):
 group_message = partial(create_message, title="group")
 private_message = partial(create_message, title="private")
 error_message = partial(create_message, title="error", sender="system")
-users_message = partial(create_message, title="users", sender="system", ext_data=app.user_list)
+users_message = partial(create_message, title="users", sender="system", ext_data=app.users)
 
 
 class Events(object):

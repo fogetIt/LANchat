@@ -17,10 +17,11 @@ class GUI(Thread, Controller):
         Controller.app.MainLoop()
 
 
-class MessageReceiver(Client):
+class REPL(Thread, Client):
 
     def __init__(self, window):
-        super(MessageReceiver, self).__init__()
+        Thread.__init__(self)
+        Client.__init__(self)
         # self.window = window
         self.window = Controller()
 
@@ -36,14 +37,7 @@ class MessageReceiver(Client):
         wx.CallAfter(self.window.show_tip, message_dict.get("ext_data"))
 
     def user_list_receiver(self, message_dict):
-        pass
-
-
-class REPL(Thread, MessageReceiver):
-
-    def __init__(self, window):
-        Thread.__init__(self)
-        MessageReceiver.__init__(self, window)
+        users = message_dict.get("users")
 
     def run(self):
         while True:

@@ -42,7 +42,7 @@ class ClientStore(Single):
         return self.user_socket_dict.itervalues()
 
     @property
-    def user_list(self):
+    def users(self):
         return self.user_socket_dict.keys()
 
 
