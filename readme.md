@@ -13,13 +13,13 @@
     + include
         * [client/](./client)
         * [setup.py](./setup.py)
-        * [app.pyw](client_app.py)
+        * [app.pyw](cliapp.py)
     + run
         ```shell
-        [sudo ]pip install git+https://github.com/fogetIt/simple-chat.git
-        # pip uninstall simple_chat_client
-        from client_app import main
-        main(host, port)
+        [sudo ]pip install git+https://github.com/fogetIt/LANchat.git
+        # [sudo ]pip uninstall LANchat
+        import cliapp
+        cliapp.run(host, port)
         ```
 
 <!--use setup.py

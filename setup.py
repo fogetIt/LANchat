@@ -18,12 +18,12 @@ elif platform.platform().lower().find("win") != -1:
 
 
 setup(
-    name="simple chat client",
+    name="LANchat",
     version="0.0.1",
-    description="client for simple-chat",
-    url="https://github.com/forgetIt/simple-chat.git",
-    packages=["client", "client.views"],
-    py_modules=["client_app"],
+    description="client for LANchat",
+    url="https://github.com/forgetIt/LANchat.git",
+    packages=["LANchat", "LANchat.views"],
+    py_modules=["cliapp"],
     install_requires=["wxPython>=3.0.2"],
     platforms=["ubuntu"],
     author="zdd",

@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-28 20:00:25
 # @Last Modified time: 2018-01-28 20:00:32
-import json
-from client import (
-    wx, StaticTextCtrl, Client, font, COLOR_RED, COLOR_BLUE
+import json, socket, wx
+from LANchat import (
+    font, COLOR_RED, COLOR_BLUE
 )
+from .better import StaticTextCtrl, Single
 from .models import RecordStore
 from .views import Views
 
 
-class MessageSender(Client):
+class Client(Single):
+
+    def __init__(self):
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.setblocking(1)
+        self.my_name = socket.gethostname()
 
     @staticmethod
     def create_message(title, receiver="", ext_data=None):
@@ -23,7 +29,7 @@ class MessageSender(Client):
     def login(self, host, port):
         self.client.connect((host, port))
         self.client.send(
-            self.create_message("login", ext_data={"name": self.user_name})
+            self.create_message("login", ext_data={"name": self.my_name})
         )
 
     def logout(self):
@@ -68,7 +74,7 @@ class Service(RecordStore, Views, Client):
         self.user_list_box.Clear()
         self.user_list_box.Insert("group", 0)
         for user in self.user_record_dict.keys():
-            if user != self.user_name:
+            if user != self.my_name:
                 self.user_list_box.Append(user)
 
     def add_record_sizer(self, user, value, is_self=True):
@@ -106,12 +112,11 @@ class Service(RecordStore, Views, Client):
         self.__reset_unread_list_box()
 
 
-class Controller(Service, MessageSender):
+class Controller(Service):
     app = wx.App()
 
     def __init__(self):
         Service.__init__(self)
-        MessageSender.__init__(self)
         self.Bind(wx.EVT_CLOSE, self.close_window_event)
         self.user_list_box.Bind(wx.EVT_LEFT_UP, self.click_user_list_event)
         self.unread_list_box.Bind(wx.EVT_LEFT_UP, self.click_unread_list_event)

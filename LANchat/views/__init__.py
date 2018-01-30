@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-28 19:51:21
 # @Last Modified time: 2018-01-28 19:55:08
-from client import wx
+import wx
 from .layout import Layout
 
 

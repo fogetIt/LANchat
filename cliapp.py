@@ -4,7 +4,7 @@
 import sys
 import json
 from threading import Thread
-from client import wx, BUFFER_SIZE, Controller
+from LANchat import wx, BUFFER_SIZE, Controller
 
 
 reload(sys)
@@ -67,6 +67,9 @@ def main(host, port):
     t2.start()
     t1.join()
     t2.join()
+
+
+run = main
 
 
 if __name__ == '__main__':

@@ -1,24 +1,7 @@
 # -*- coding: utf-8 -*-
-# @Date:   2018-01-23 15:26:09
-# @Last Modified time: 2018-01-23 15:26:21
+# @Date:   2018-01-30 09:54:24
+# @Last Modified time: 2018-01-30 09:54:32
 import wx
-import socket
-
-
-BUFFER_SIZE = 4096
-COLOR_RED = wx.Colour(255, 0, 0)
-COLOR_BLUE = wx.Colour(30, 144, 255)
-COLOR_WHITE = wx.Colour(250, 250, 250)
-COLOR_GREEN = wx.Colour(0, 139, 69)
-
-
-def font(size):
-    return wx.Font(
-        pointSize=size,
-        family=wx.SWISS,
-        style=wx.NORMAL,
-        weight=wx.BOLD
-    )
 
 
 class Single(object):
@@ -28,14 +11,6 @@ class Single(object):
         if not hasattr(cls, "_instance"):
             cls._instance = super(Single, cls).__new__(cls, *args, **kwargs)
         return cls._instance
-
-
-class Client(Single):
-
-    def __init__(self):
-        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.setblocking(1)
-        self.user_name = socket.gethostname()
 
 
 class StaticTextCtrl(wx.TextCtrl):
@@ -56,4 +31,21 @@ class StaticTextCtrl(wx.TextCtrl):
             self.SetBackgroundColour(parent.BackgroundColour)
 
 
-from .controller import Controller
+class UniqueTuple(tuple):
+
+    def __init__(self, seq=()):
+        super(UniqueTuple, self).__init__(set(seq))
+
+    def get(self, i):
+        try:
+            return None if i < 0 else self.__getitem__(i)
+        except Exception as e:
+            print(e)
+            return None
+
+    def inv_get(self, value):
+        try:
+            return self.index(value)
+        except Exception as e:
+            print(e)
+            return None
