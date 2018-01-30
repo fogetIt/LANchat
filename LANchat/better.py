@@ -42,11 +42,10 @@ class StaticTextCtrl(wx.TextCtrl):
             self.SetBackgroundColour(parent.BackgroundColour)
 
     def set_size(self):
-        width = int(self.GetCharWidth() * RECORD_CHATS_PER_LINE)
         height = int(self.GetCharHeight() * self.lines_number)
-        self.SetMinSize((width, height))
-        self.SetMaxSize((width, height))
-        self.SetSize((width, height))
+        self.SetMinSize((-1, height))
+        self.SetMaxSize((-1, height))
+        self.SetSize((-1, height))
 
 
 class UniqueTuple(tuple):
