@@ -16,7 +16,7 @@ class Layout(Components):
         self.left_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_sizer = wx.BoxSizer(wx.VERTICAL)
         self.right_top_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.layout({
+        self.layout_manager({
             "object": self.main_sizer,
             "items": [
                 {
@@ -77,10 +77,10 @@ class Layout(Components):
             ]
         })
 
-    def layout(self, d):
+    def layout_manager(self, d):
         if isinstance(d, dict):
             object = d.get("object")
             items = d.get("items", [])
             for item in items:
-                object.Add(self.layout(item), **item.get("style"))
+                object.Add(self.layout_manager(item), **item.get("style"))
             return object
