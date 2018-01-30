@@ -40,6 +40,7 @@ class Service(RecordStore, Views, Client):
 
     def __init__(self):
         Views.__init__(self)
+        Client.__init__(self)
         RecordStore.__init__(self)
 
     def reset_selected_user(self, user):
