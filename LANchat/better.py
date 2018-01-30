@@ -23,10 +23,7 @@ class StaticTextCtrl(wx.TextCtrl):
         在一行显示满之后自动进行换行，不需要空白字符提示
     """
     def __init__(self, *args, **kwargs):
-        self.style = wx.TE_MULTILINE
-            # wx.TE_READONLY
-        # | wx.TE_MULTILINE
-        # | wx.BRUSHSTYLE_TRANSPARENT
+        self.style = wx.TE_MULTILINE | wx.TE_READONLY | wx.BRUSHSTYLE_TRANSPARENT
         self.style = self.style | kwargs.get("style") if kwargs.get("style") else self.style
         kwargs.update(style=self.style)
         self.lines_number = self.get_lines_number(kwargs.get("value", ""))
@@ -45,7 +42,6 @@ class StaticTextCtrl(wx.TextCtrl):
             self.SetBackgroundColour(parent.BackgroundColour)
 
     def set_size(self):
-        print self.GetCharHeight(), self.lines_number
         width = int(self.GetCharWidth() * RECORD_CHATS_PER_LINE)
         height = int(self.GetCharHeight() * self.lines_number)
         self.SetMinSize((width, height))
