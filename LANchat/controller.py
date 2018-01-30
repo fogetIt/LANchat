@@ -73,11 +73,12 @@ class Service(RecordStore, Views, Client):
         record.SetFont(font(12))
         if is_self:
             self.record_sizer.Add(
-                record, proportion=0, border=150, flag=wx.EXPAND | wx.LEFT
+                record, proportion=0, border=150, flag=wx.ALIGN_RIGHT | wx.EXPAND | wx.LEFT
             )
         else:
+            record.SetForegroundColour(COLOR_BLUE)
             self.record_sizer.Add(
-                record, proportion=0, border=150, flag=wx.EXPAND | wx.RIGHT
+                record, proportion=0, border=150, flag=wx.ALIGN_LEFT | wx.EXPAND | wx.RIGHT
             )
         record.Hide()
         self.add_record(user, record)
