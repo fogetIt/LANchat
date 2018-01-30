@@ -25,10 +25,4 @@ class RouterError(Exception):
         super(RouterError, self).__init__(err)
 
 
-def create_message(title=None, sender=None, ext_data=None):
-    if title and sender and ext_data:
-        return json.dumps({"title": title, "sender": sender, "ext_data": ext_data})
-    return None
-
-
 from .events import app

@@ -26,7 +26,7 @@ class AcceptClient(Thread):
                 if not view:
                     app.logger.error("message title error")
                     app.send_message(
-                        app.error_message(ext_data="message title error!"),
+                        app.error_msg(ext_data="message title error!"),
                         client_socket,
                         receiver="loginer"
                     )
@@ -50,7 +50,7 @@ class TransmitData(Thread):
                     if not sender:
                         app.logger.error("{sender} is not online".format(sender=sender))
                         app.send_message(
-                            app.error_message(ext_data="you are offline, please restart client!"),
+                            app.error_msg(ext_data="you are offline, please restart client!"),
                             client_socket
                         )
                     else:
@@ -58,7 +58,7 @@ class TransmitData(Thread):
                         if not view:
                             app.logger.error("message title error")
                             app.send_message(
-                                app.error_message(ext_data="message title error!"),
+                                app.error_msg(ext_data="message title error!"),
                                 client_socket
                             )
                         else:

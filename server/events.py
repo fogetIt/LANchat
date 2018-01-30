@@ -14,11 +14,11 @@ def login(message_dict, client_socket):
     if result:
         app.logger.warning(result)
         app.send_message(
-            app.error_message(ext_data=result),
+            app.error_msg(ext_data=result),
             client_socket
         )
     else:
-        app.broadcast(app.users_message())
+        app.broadcast(app.users_msg())
         app.logger.info("{user_name} login successful".format(user_name=user_name))
 
 
@@ -30,7 +30,7 @@ def logout(message_dict, client_socket):
 @app.route("single")
 def single(message_dict, client_socket):
     app.send_message(
-        app.single_message(sender=app.get_user(client_socket), ext_data=message_dict.get("ext_data")),
+        app.single_msg(sender=app.get_user(client_socket), ext_data=message_dict.get("ext_data")),
         app.get_socket(message_dict.get("receiver"))
     )
 
@@ -38,7 +38,7 @@ def single(message_dict, client_socket):
 @app.route("group")
 def group(message_dict, client_socket):
     app.broadcast(
-        app.group_message(sender=app.get_user(client_socket), ext_data=message_dict.get("ext_data")),
+        app.group_msg(sender=app.get_user(client_socket), ext_data=message_dict.get("ext_data")),
         sender=app.get_user(client_socket),
         sender_socket=client_socket
     )

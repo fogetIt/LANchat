@@ -3,7 +3,7 @@
 # @Last Modified time: 2018-01-20 17:14:28
 import json
 from functools import partial
-from server import BUFFER_SIZE, create_message
+from server import BUFFER_SIZE
 from .logger import Logger
 from .mixin import (
     ServerSocket, ClientStore, RouterMap
@@ -16,10 +16,16 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         Logger.__init__(self)
         ServerSocket.__init__(self)
         ClientStore.__init__(self)
-        self.single_message = partial(create_message, title="single")
-        self.group_message = partial(create_message, title="group")
-        self.error_message = partial(create_message, title="error", sender="system")
-        self.users_message = partial(create_message, title="users", sender="system", ext_data=self.users)
+        self.single_msg = partial(self.create_message, "single")
+        self.group_msg = partial(self.create_message, "group")
+        self.error_msg = partial(self.create_message, "error", sender="system")
+        self.users_msg = partial(self.create_message, "users", sender="system", ext_data=self.users)
+
+    @staticmethod
+    def create_message(title, sender=None, ext_data=None):
+        if title and sender and ext_data:
+            return json.dumps({"title": title, "sender": sender, "ext_data": ext_data})
+        return None
 
     def send_message(self, message, receiver_socket, receiver=None):
         if not message:
@@ -52,7 +58,7 @@ class ChartServer(Logger, ServerSocket, ClientStore):
     def close_client(self, client_socket):
         client_socket.close()
         self.remove_client(client_socket=client_socket)
-        self.broadcast(self.users_message())
+        self.broadcast(self.users_msg())
 
 
 class App(ChartServer, RouterMap):

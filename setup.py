@@ -10,7 +10,7 @@ if platform.platform().lower().find("ubuntu") != -1:
     Popen([
         "/bin/bash", "-c",
         """
-        python -c 'import wx; exit()' || apt-get install python-wxtools -y
+        python -c 'import wx; exit()' || sudo apt-get install python-wxtools -y
         """
     ]).wait()
 elif platform.platform().lower().find("win") != -1:

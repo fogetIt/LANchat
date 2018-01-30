@@ -1,26 +1,28 @@
-##### server & client
-- server
-    + include
-        * [server/](./server)
-        * [server_views.py](server/events.py)
-        * [run.py](./run.py)
-    + run
-        ```shell
-        pip install bidict==0.13.1 -i https://pypi.tuna.tsinghua.edu.cn/simple
-        python server.py
-        ```
-- client
-    + include
-        * [client/](./client)
-        * [setup.py](./setup.py)
-        * [app.pyw](cliapp.py)
-    + run
-        ```shell
-        [sudo ]pip install git+https://github.com/fogetIt/LANchat.git
-        # [sudo ]pip uninstall LANchat
-        import cliapp
-        cliapp.run(host, port)
-        ```
+##### server
+- include
+    + [server/](./server)
+    + [server_views.py](server/events.py)
+    + [run.py](./run.py)
+- run
+```shell
+pip install bidict==0.13.1 -i https://pypi.tuna.tsinghua.edu.cn/simple
+python server.py
+```
+##### client
+- include
+    + [client/](./client)
+    + [setup.py](./setup.py)
+    + [app.pyw](cliapp.py)
+- install
+```shell
+sudo pip install git+https://github.com/fogetIt/LANchat.git
+# sudo ]pip uninstall LANchat
+```
+- run
+```python
+import cliapp
+cliapp.run(host="***")
+```
 
 <!--use setup.py
 build:    python setup.py build
