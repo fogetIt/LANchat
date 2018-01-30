@@ -48,8 +48,10 @@ class Service(RecordStore, Views, Client):
 
     def __refresh_notice_icon(self):
         if self.notice_icon == u"⓿":
+            self.notice_button.Enable(False)
             self.notice_button.SetForegroundColour(COLOR_BLUE)
         else:
+            self.notice_button.Enable(True)
             self.notice_button.SetForegroundColour(COLOR_RED)
         self.notice_button.SetLabel(self.notice_icon)
 
@@ -136,7 +138,7 @@ class Controller(Service):
         elif not self.selected_user:
             self.show_tip(u"未选择用户")
         elif self.selected_user == "group":
-            if not self.users:
+            if not self.users_set:
                 self.show_tip(u"群聊为空")
             else:
                 self.group(value)

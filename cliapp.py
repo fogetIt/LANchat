@@ -31,7 +31,7 @@ class REPL(Thread):
 
     def single_receiver(self, message_dict):
         sender = message_dict.get("sender")
-        wx.CallAfter(self.window.add_record_sizer, sender, message_dict.get("ext_data"))
+        wx.CallAfter(self.window.add_record_sizer, sender, message_dict.get("ext_data"), False)
         if sender == self.window.selected_user:
             wx.CallAfter(self.window.refresh_record_panel)
 

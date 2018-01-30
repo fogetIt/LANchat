@@ -39,6 +39,7 @@ class NoticeButton(Single):
         )
         self.notice_button.SetFont(font(13))
         self.notice_button.SetForegroundColour(COLOR_BLUE)
+        self.notice_button.Enable(False)
 
 
 class RecordPanel(Single):
