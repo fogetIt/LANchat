@@ -9,8 +9,8 @@ class RecordStore(Single):
 
     def __init__(self):
         self.selected_user = u""
-        self.user_record_dict = {}
-        self.users_set = set()
+        self.user_record_dict = {"group": []}
+        self.users_set = set(("group"))
         self.unread_set = set()
 
     def add_record(self, user, record):
