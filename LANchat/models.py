@@ -10,7 +10,7 @@ class RecordStore(Single):
     def __init__(self):
         self.selected_user = u""
         self.user_record_dict = {"group": []}
-        self.users_set = set(("group"))
+        self.users_set = set()
         self.unread_set = set()
 
     def add_record(self, user, record):
@@ -45,9 +45,9 @@ class RecordStore(Single):
             i = len(NUMBER_ICONS) - 1
         return NUMBER_ICONS.get(i)
 
-    def update_users(self, users):
+    def update_users(self, users, my_name):
         old_users = self.users_set
-        new_users = set(users)
+        new_users = set(users) | set(("group")) - set((my_name))
         diff_old = old_users - new_users
         diff_new = new_users - old_users
         for user in diff_old:

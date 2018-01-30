@@ -62,12 +62,11 @@ class Service(RecordStore, Views, Client):
             self.unread_list_box.Append(user)
 
     def refresh_user_list_box(self, users):
-        self.update_users(users)
+        self.update_users(users, self.my_name)
         self.user_list_box.Clear()
         self.user_list_box.Insert("group", 0)
         for user in self.users_set:
-            if user != self.my_name:
-                self.user_list_box.Append(user)
+            self.user_list_box.Append(user)
 
     def add_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
