@@ -23,7 +23,7 @@ class RecordStore(Single):
     def remove_record(self, user=None):
         user = self.selected_user if not user else user
         self.__remove_unread_set(user)
-        if user not in (self.unread_set | self.users_set):
+        if user not in (self.unread_set | self.users_set | set(("group", ))):
             self.user_record_dict.pop(user, None)
 
     def get_record(self, user):
@@ -50,7 +50,6 @@ class RecordStore(Single):
         new_users = set(users) - set((my_name, ))
         diff_old = old_users - new_users
         diff_new = new_users - old_users
-        print(new_users, diff_old, diff_new)
         for user in diff_old:
             self.remove_record(user=user)
         for user in diff_new:
