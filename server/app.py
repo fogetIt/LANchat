@@ -19,7 +19,7 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         self.single_msg = partial(self.create_message, "single")
         self.group_msg = partial(self.create_message, "group")
         self.error_msg = partial(self.create_message, "error", sender="system")
-        self.users_msg = partial(self.create_message, "users", sender="system", ext_data=self.users)
+        self.users_msg = partial(self.create_message, "users", sender="system")
 
     @staticmethod
     def create_message(title, sender=None, ext_data=None):
@@ -58,7 +58,7 @@ class ChartServer(Logger, ServerSocket, ClientStore):
     def close_client(self, client_socket):
         client_socket.close()
         self.remove_client(client_socket=client_socket)
-        self.broadcast(self.users_msg())
+        self.broadcast(self.users_msg(ext_data=self.users))
 
 
 class App(ChartServer, RouterMap):

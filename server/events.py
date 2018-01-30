@@ -18,7 +18,7 @@ def login(message_dict, client_socket):
             client_socket
         )
     else:
-        app.broadcast(app.users_msg())
+        app.broadcast(app.users_msg(ext_data=app.users))
         app.logger.info("{user_name} login successful".format(user_name=user_name))
 
 
