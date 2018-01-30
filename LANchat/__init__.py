@@ -5,7 +5,6 @@
 LANchat client core
 """
 import wx
-from .better import UniqueTuple
 
 
 BUFFER_SIZE = 4096
@@ -14,9 +13,8 @@ COLOR_RED = wx.Colour(255, 0, 0)
 COLOR_BLUE = wx.Colour(30, 144, 255)
 COLOR_WHITE = wx.Colour(250, 250, 250)
 COLOR_GREEN = wx.Colour(0, 139, 69)
-NUMBER_ICONS = UniqueTuple(
-    (u"⓿", u"➊", u"➋", u"➌", u"➍", u"➎", u"➏", u"➐", u"➑", u"➒", u"➓", u"∞")
-)
+CHINESE_REGEX = u"[\u4e00-\u9fa5]"
+RECORD_CHATS_PER_LINE = 57
 
 
 def font(size):
@@ -26,5 +24,11 @@ def font(size):
         style=wx.NORMAL,
         weight=wx.BOLD
     )
+
+
+from .better import UniqueTuple
+NUMBER_ICONS = UniqueTuple(
+    (u"⓿", u"➊", u"➋", u"➌", u"➍", u"➎", u"➏", u"➐", u"➑", u"➒", u"➓", u"∞")
+)
 
 from .controller import Controller

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-30 09:54:24
 # @Last Modified time: 2018-01-30 09:54:32
-import wx
+import re, math, wx
+from LANchat import font, CHINESE_REGEX, RECORD_CHATS_PER_LINE
 
 
 class Single(object):
@@ -22,13 +23,34 @@ class StaticTextCtrl(wx.TextCtrl):
         在一行显示满之后自动进行换行，不需要空白字符提示
     """
     def __init__(self, *args, **kwargs):
-        kwargs.update(
-            style=wx.TE_READONLY | wx.TE_MULTILINE | wx.BORDER_NONE | wx.BRUSHSTYLE_TRANSPARENT
-        )
+        self.style = wx.TE_MULTILINE
+            # wx.TE_READONLY
+        # | wx.TE_MULTILINE
+        # | wx.BRUSHSTYLE_TRANSPARENT
+        self.style = self.style | kwargs.get("style") if kwargs.get("style") else self.style
+        kwargs.update(style=self.style)
+        self.lines_number = self.get_lines_number(kwargs.get("value", ""))
         super(StaticTextCtrl, self).__init__(*args, **kwargs)
-        parent = kwargs.get("parent")
+        self.SetFont(font(12))
+        self.set_bg_color(kwargs.get("parent"))
+        self.set_size()
+
+    @staticmethod
+    def get_lines_number(_str):
+        lines_number = (len(_str) + len(re.findall(CHINESE_REGEX, _str))) * 0.1 / RECORD_CHATS_PER_LINE
+        return math.ceil(lines_number * 10)
+
+    def set_bg_color(self, parent):
         if parent:
             self.SetBackgroundColour(parent.BackgroundColour)
+
+    def set_size(self):
+        print self.GetCharHeight(), self.lines_number
+        width = int(self.GetCharWidth() * RECORD_CHATS_PER_LINE)
+        height = int(self.GetCharHeight() * self.lines_number)
+        self.SetMinSize((width, height))
+        self.SetMaxSize((width, height))
+        self.SetSize((width, height))
 
 
 class UniqueTuple(tuple):

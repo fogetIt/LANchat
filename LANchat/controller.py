@@ -3,7 +3,7 @@
 # @Last Modified time: 2018-01-28 20:00:32
 import json, socket, wx
 from LANchat import (
-    font, COLOR_RED, COLOR_BLUE
+    COLOR_RED, COLOR_BLUE
 )
 from .better import StaticTextCtrl, Single
 from .models import RecordStore
@@ -70,15 +70,16 @@ class Service(RecordStore, Views, Client):
 
     def add_record_sizer(self, user, value, is_self=True):
         record = StaticTextCtrl(parent=self.record_panel, value=value)
-        record.SetFont(font(12))
         if is_self:
+            if record.lines_number == 1:
+                record.SetWindowStyle(record.GetWindowStyle() & ~wx.TE_LEFT | wx.TE_RIGHT)
             self.record_sizer.Add(
-                record, proportion=0, border=150, flag=wx.ALIGN_RIGHT | wx.EXPAND | wx.LEFT
+                record, proportion=0, border=150, flag=wx.EXPAND | wx.LEFT
             )
         else:
             record.SetForegroundColour(COLOR_BLUE)
             self.record_sizer.Add(
-                record, proportion=0, border=150, flag=wx.ALIGN_LEFT | wx.EXPAND | wx.RIGHT
+                record, proportion=0, border=150, flag=wx.EXPAND | wx.RIGHT
             )
         record.Hide()
         self.add_record(user, record)
