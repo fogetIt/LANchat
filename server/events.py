@@ -14,7 +14,8 @@ def login(message_dict, client_socket):
     if result:
         app.logger.warning(result)
         app.send_message(
-            app.error_message(ext_data=result), client_socket
+            app.error_message(ext_data=result),
+            client_socket
         )
     else:
         app.broadcast(app.users_message())
@@ -26,20 +27,18 @@ def logout(message_dict, client_socket):
     app.close_client(client_socket)
 
 
-@app.route("private")
-def private(message_dict, client_socket):
-    ext_data = message_dict.get("ext_data")
+@app.route("single")
+def single(message_dict, client_socket):
     app.send_message(
-        app.private_message(sender=app.get_user(client_socket), ext_data=ext_data),
+        app.single_message(sender=app.get_user(client_socket), ext_data=message_dict.get("ext_data")),
         app.get_socket(message_dict.get("receiver"))
     )
 
 
 @app.route("group")
 def group(message_dict, client_socket):
-    ext_data = message_dict.get("ext_data")
     app.broadcast(
-        app.group_message(sender=app.get_user(client_socket), ext_data=ext_data),
+        app.group_message(sender=app.get_user(client_socket), ext_data=message_dict.get("ext_data")),
         app.get_user(client_socket),
         client_socket
     )

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-20 15:20:48
 # @Last Modified time: 2018-01-20 15:20:56
+import json
+
+
 PORT = 8888
 BUFFER_SIZE = 4096
 LISTEN_NUMBER = 15
@@ -20,6 +23,12 @@ class RouterError(Exception):
 
     def __init__(self, err=""):
         super(RouterError, self).__init__(err)
+
+
+def create_message(title=None, sender=None, ext_data=None):
+    if title and sender and ext_data:
+        return json.dumps({"title": title, "sender": sender, "ext_data": ext_data})
+    return None
 
 
 from .events import app

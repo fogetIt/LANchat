@@ -57,7 +57,7 @@ class REPL(Thread):
             except Exception as e:
                 print(e)
                 self.window.show_tip(e)
-                # break
+                break
 
 
 def main(host, port):

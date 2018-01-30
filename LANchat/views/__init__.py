@@ -16,7 +16,7 @@ class Views(wx.Frame, Layout):
             parent=None,
             id=-1,
             name="main",
-            title="simple chat client",
+            title="LAN chat client",
             pos=pos,
             size=size,
             style=wx.DEFAULT_FRAME_STYLE

@@ -91,6 +91,7 @@ class UnreadTip(Single):
         """
         self.unread_tip = wx.Dialog(
             parent=panel,
+            id=2,
             title=u"未读消息",
         )
         self.unread_sizer = wx.BoxSizer()

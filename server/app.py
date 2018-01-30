@@ -2,7 +2,8 @@
 # @Date:   2018-01-20 17:14:06
 # @Last Modified time: 2018-01-20 17:14:28
 import json
-from server import BUFFER_SIZE
+from functools import partial
+from server import BUFFER_SIZE, create_message
 from .logger import Logger
 from .mixin import (
     ServerSocket, ClientStore, RouterMap
@@ -15,25 +16,10 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         Logger.__init__(self)
         ServerSocket.__init__(self)
         ClientStore.__init__(self)
-
-    def create_message(self, sender=None, title=None, ext_data=None):
-        if not sender or not title or not ext_data:
-            return None
-        message_dict = {"title": title, "sender": sender}
-        message_dict.update(ext_data=ext_data)
-        return json.dumps(message_dict)
-
-    def group_message(self, sender=None, ext_data=None):
-        return self.create_message(sender=sender, title="group", ext_data=ext_data)
-
-    def private_message(self, sender=None, ext_data=None):
-        return self.create_message(sender=sender, title="private", ext_data=ext_data)
-
-    def error_message(self, ext_data=None):
-        return self.create_message(sender="system", title="error", ext_data=ext_data)
-
-    def users_message(self):
-        return self.create_message(sender="system", title="users", ext_data=self.users)
+        self.group_message = partial(create_message, title="group")
+        self.single_message = partial(create_message, title="single")
+        self.error_message = partial(create_message, title="error", sender="system")
+        self.users_message = partial(create_message, title="users", sender="system", ext_data=self.users)
 
     def send_message(self, message, receiver_socket, receiver=None):
         if not message:
