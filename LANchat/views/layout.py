@@ -47,7 +47,7 @@ class Layout(Components):
                                 {
                                     "object": self.notice_button,
                                     "style": {
-                                        "proportion": 4.5, "border": 240, "flag": wx.EXPAND | wx.RIGHT
+                                        "proportion": 4.5, "border": 230, "flag": wx.EXPAND | wx.RIGHT
                                     }
                                 }, {
                                     "object": self.user_name_text,
