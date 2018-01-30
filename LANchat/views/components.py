@@ -105,9 +105,9 @@ class UnreadTip(Single):
         self.unread_list_box.SetForegroundColour(COLOR_RED)
 
         self.unread_sizer.Add(self.unread_list_box, proportion=10, border=10, flag=wx.EXPAND | wx.ALL)
-        self.unread_sizer.Fit(self.unread_tip)
 
     def show_unread_tip(self):
+        self.unread_sizer.Fit(self.unread_tip)
         self.unread_tip.ShowModal()
         self.unread_tip.Close()
 
