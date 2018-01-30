@@ -18,30 +18,22 @@ class Client(Single):
         self.my_name = socket.gethostname()
 
     @staticmethod
-    def create_message(title, receiver="", ext_data=None):
-        message_dict = {"title": title}
-        if receiver:
-            message_dict.update({"receiver": receiver})
-        if ext_data:
-            message_dict.update(ext_data=ext_data)
-        return json.dumps(message_dict)
+    def create_message(title, receiver="", ext_data=""):
+        return json.dumps({"title": title, "receiver": receiver, "ext_data": ext_data})
 
     def login(self, host, port):
         self.client.connect((host, port))
-        self.client.send(self.create_message("login",
-                                             ext_data={"name": self.my_name}))
+        self.client.send(self.create_message("login", ext_data=self.my_name))
 
     def logout(self):
         self.client.send(self.create_message("logout"))
         self.client.close()
 
-    def private(self, value, receiver):
-        self.client.send(self.create_message("private",
-                                             receiver=receiver, ext_data={"ext_data": value}))
+    def single(self, value, receiver):
+        self.client.send(self.create_message("single", receiver=receiver, ext_data=value))
 
     def group(self, value):
-        self.client.send(self.create_message("group",
-                                             ext_data={"ext_data": value}))
+        self.client.send(self.create_message("group", ext_data=value))
 
 
 class Service(RecordStore, Views, Client):
@@ -151,6 +143,6 @@ class Controller(Service):
                 self.add_record_sizer("group", value)
                 self.refresh_record_panel()
         else:
-            self.private(value, self.selected_user)
+            self.single(value, self.selected_user)
             self.add_record_sizer(self.selected_user, value)
             self.refresh_record_panel()

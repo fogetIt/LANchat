@@ -9,7 +9,7 @@ app = App()
 
 @app.route("login")
 def login(message_dict, client_socket):
-    user_name = message_dict.get("name")
+    user_name = message_dict.get("ext_data")
     result = app.add_client(user_name, client_socket)
     if result:
         app.logger.warning(result)
@@ -39,6 +39,6 @@ def single(message_dict, client_socket):
 def group(message_dict, client_socket):
     app.broadcast(
         app.group_message(sender=app.get_user(client_socket), ext_data=message_dict.get("ext_data")),
-        app.get_user(client_socket),
-        client_socket
+        sender=app.get_user(client_socket),
+        sender_socket=client_socket
     )

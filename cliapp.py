@@ -29,13 +29,13 @@ class REPL(Thread):
         Thread.__init__(self)
         self.window = window
 
-    def private_receiver(self, message_dict):
+    def single_receiver(self, message_dict):
         sender = message_dict.get("sender")
         wx.CallAfter(self.window.add_record_sizer, sender, message_dict.get("ext_data"))
         if sender == self.window.selected_user:
             wx.CallAfter(self.window.refresh_record_panel)
 
-    group_receiver = private_receiver
+    group_receiver = single_receiver
 
     def error_receiver(self, message_dict):
         wx.CallAfter(self.window.show_tip, message_dict.get("ext_data"))

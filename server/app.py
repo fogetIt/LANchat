@@ -16,8 +16,8 @@ class ChartServer(Logger, ServerSocket, ClientStore):
         Logger.__init__(self)
         ServerSocket.__init__(self)
         ClientStore.__init__(self)
-        self.group_message = partial(create_message, title="group")
         self.single_message = partial(create_message, title="single")
+        self.group_message = partial(create_message, title="group")
         self.error_message = partial(create_message, title="error", sender="system")
         self.users_message = partial(create_message, title="users", sender="system", ext_data=self.users)
 
