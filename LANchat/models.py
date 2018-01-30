@@ -47,9 +47,10 @@ class RecordStore(Single):
 
     def update_users(self, users, my_name):
         old_users = self.users_set
-        new_users = set(users) | set(("group")) - set((my_name))
+        new_users = set(users) - set((my_name, ))
         diff_old = old_users - new_users
         diff_new = new_users - old_users
+        print(new_users, diff_old, diff_new)
         for user in diff_old:
             self.remove_record(user=user)
         for user in diff_new:
