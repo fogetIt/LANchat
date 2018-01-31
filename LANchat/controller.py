@@ -111,6 +111,7 @@ class Controller(Service):
         self.unread_list_box.Bind(wx.EVT_LEFT_UP, self.click_unread_list_event)
         self.notice_button.Bind(wx.EVT_BUTTON, self.click_notice_event)
         self.send_button.Bind(wx.EVT_BUTTON, self.send_message_event)
+        self.input_field.Bind(wx.EVT_TEXT_ENTER, self.send_message_event)
 
     def close_window_event(self, e):
         self.logout()
@@ -148,7 +149,9 @@ class Controller(Service):
                 self.group(value)
                 self.add_record_sizer("group", value)
                 self.refresh_record_panel()
+                self.input_field.Clear()
         else:
             self.single(value, self.selected_user)
             self.add_record_sizer(self.selected_user, value)
             self.refresh_record_panel()
+            self.input_field.Clear()
