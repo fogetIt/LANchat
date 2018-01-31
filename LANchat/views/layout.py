@@ -47,12 +47,12 @@ class Layout(Components):
                                 {
                                     "object": self.notice_button,
                                     "style": {
-                                        "proportion": 4.5, "border": 230, "flag": wx.EXPAND | wx.RIGHT
+                                        "proportion": 3, "border": 135, "flag": wx.EXPAND | wx.RIGHT
                                     }
                                 }, {
                                     "object": self.user_name_text,
                                     "style": {
-                                        "proportion": 5.5, "border": 0, "flag": wx.EXPAND | wx.LEFT
+                                        "proportion": 7, "border": 0, "flag": wx.EXPAND | wx.LEFT
                                     }
                                 }
                             ]
