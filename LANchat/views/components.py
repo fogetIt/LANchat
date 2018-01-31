@@ -56,7 +56,7 @@ class InputField(Single):
 
     def __init__(self, panel):
         self.input_field = wx.TextCtrl(
-            parent=panel, id=15, value="", style=wx.TE_MULTILINE | wx.TE_RICH2
+            parent=panel, id=15, value="", style=wx.TE_MULTILINE | wx.TE_RICH2 | wx.TE_PROCESS_ENTER
         )
         self.input_field.SetFont(font(12))
 
