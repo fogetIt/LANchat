@@ -1,7 +1,6 @@
 ##### server
 - include
     + [server/](./server)
-    + [server_views.py](server/events.py)
     + [run.py](./run.py)
 - run
 ```shell
@@ -12,7 +11,7 @@ python server.py
 - include
     + [client/](./client)
     + [setup.py](./setup.py)
-    + [app.pyw](cliapp.py)
+    + [cliapp.py](cliapp.py)
 - install
 ```shell
 sudo pip install git+https://github.com/fogetIt/LANchat.git
