@@ -37,7 +37,7 @@ class NoticeButton(Single):
         self.notice_button = wx.Button(
             parent=panel, id=13, size=(0, 30), label=u"⓿", style=wx.ALIGN_LEFT
         )
-        self.notice_button.SetFont(font(13))
+        self.notice_button.SetFont(font(16))
         self.notice_button.SetForegroundColour(COLOR_BLUE)
         self.notice_button.Enable(False)
 

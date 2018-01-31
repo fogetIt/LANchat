@@ -69,17 +69,19 @@ class Service(RecordStore, Views, Client):
             self.user_list_box.Append(user)
 
     def add_record_sizer(self, user, value, is_self=True):
+        margin_sizer = wx.BoxSizer()
         record = StaticTextCtrl(parent=self.record_panel, value=value)
+        margin_sizer.Add(record, proportion=10, border=10, flag=wx.EXPAND | wx.TOP | wx.BOTTOM)
         if is_self:
             if record.lines_number == 1:
                 record.SetWindowStyle(record.GetWindowStyle() & ~wx.TE_LEFT | wx.TE_RIGHT)
             self.record_sizer.Add(
-                record, proportion=0, border=150, flag=wx.EXPAND | wx.LEFT
+                margin_sizer, proportion=0, border=150, flag=wx.EXPAND | wx.LEFT
             )
         else:
             record.SetForegroundColour(COLOR_BLUE)
             self.record_sizer.Add(
-                record, proportion=0, border=150, flag=wx.EXPAND | wx.RIGHT
+                margin_sizer, proportion=0, border=150, flag=wx.EXPAND | wx.RIGHT
             )
         record.Hide()
         self.add_record(user, record)
