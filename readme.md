@@ -3,7 +3,7 @@
     + [server/](./server)
     + [run.py](./run.py)
 - run
-```shell
+```bash
 pip install bidict==0.13.1 -i https://pypi.tuna.tsinghua.edu.cn/simple
 python server.py
 ```
@@ -13,7 +13,7 @@ python server.py
     + [setup.py](./setup.py)
     + [cliapp.py](./cliapp.py)
 - install
-```shell
+```bash
 sudo pip install git+https://github.com/fogetIt/LANchat.git
 # sudo ]pip uninstall LANchat
 ```
@@ -65,7 +65,7 @@ solution2
 -->
 
 ##### install wxPython
-```shell
+```bash
 # in system
 sudo apt-get install python-wxtools
 # in venv
