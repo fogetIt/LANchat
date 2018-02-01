@@ -37,11 +37,11 @@ class REPL(Thread):
             wx.CallAfter(self.window.refresh_record_panel)
 
     def group_receiver(self, message_dict):
-        ext_data = "{}:\n\t{}".format(
-            message_dict.get("sender"),
-            message_dict.get("ext_data")
+        wx.CallAfter(
+            self.window.add_record_sizer,
+            "group",
+            "{}:\n\t{}".format(message_dict.get("sender"), message_dict.get("ext_data")), False
         )
-        wx.CallAfter(self.window.add_record_sizer, "group", ext_data, False)
         if "group" == self.window.selected_user:
             wx.CallAfter(self.window.refresh_record_panel)
 
