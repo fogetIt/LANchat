@@ -23,19 +23,25 @@ class StaticTextCtrl(wx.TextCtrl):
         在一行显示满之后自动进行换行，不需要空白字符提示
     """
     def __init__(self, *args, **kwargs):
-        self.style = wx.TE_MULTILINE | wx.TE_READONLY | wx.BRUSHSTYLE_TRANSPARENT
-        self.style = self.style | kwargs.get("style") if kwargs.get("style") else self.style
-        kwargs.update(style=self.style)
-        self.lines_number = self.get_lines_number(kwargs.get("value", ""))
+        self.record_value = kwargs.get("value", "").decode("utf-8")
+        STYLE = wx.TE_MULTILINE | wx.TE_READONLY | wx.BRUSHSTYLE_TRANSPARENT
+        style = STYLE | kwargs.get("style") if kwargs.get("style") else STYLE
+        kwargs.update(style=style)
+        #: decode network transmitted ascii string to utf-8 string
         super(StaticTextCtrl, self).__init__(*args, **kwargs)
         self.SetFont(font(12))
         self.set_bg_color(kwargs.get("parent"))
         self.set_size()
 
-    @staticmethod
-    def get_lines_number(_str):
-        lines_number = (len(_str) + len(re.findall(CHINESE_REGEX, _str))) * 0.1 / RECORD_CHATS_PER_LINE
-        return math.ceil(lines_number * 10)
+    @property
+    def lines_number(self):
+        lines_number = (
+                               len(self.record_value) +
+                               (len(re.findall(CHINESE_REGEX, self.record_value)) * 1.0) +
+                               (self.record_value.count(u"\t") * 3.0) -
+                               self.record_value.count(u"\n")
+                       ) / RECORD_CHATS_PER_LINE + self.record_value.count(u"\n")
+        return math.ceil(lines_number)
 
     def set_bg_color(self, parent):
         if parent:

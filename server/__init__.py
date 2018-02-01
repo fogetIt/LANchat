@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-20 15:20:48
 # @Last Modified time: 2018-01-20 15:20:56
-import json
 
 
 PORT = 8888
@@ -25,4 +24,6 @@ class RouterError(Exception):
         super(RouterError, self).__init__(err)
 
 
-from .events import app
+from .app import App
+app = App()
+from server import events

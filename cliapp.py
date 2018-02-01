@@ -37,7 +37,7 @@ class REPL(Thread):
             wx.CallAfter(self.window.refresh_record_panel)
 
     def group_receiver(self, message_dict):
-        ext_data = "{}: {}".format(
+        ext_data = "{}:\n\t{}".format(
             message_dict.get("sender"),
             message_dict.get("ext_data")
         )
@@ -57,14 +57,14 @@ class REPL(Thread):
                 message = self.window.client.recv(BUFFER_SIZE)
                 try:
                     message_dict = json.loads(message)
-                    REPL.__dict__.get("%s_receiver" % message_dict.get("title"))(self, message_dict)
+                    REPL.__dict__.get(
+                        "{}_receiver".format(message_dict.get("title"))
+                    )(self, message_dict)
                 except Exception as e:
-                    self.window.show_tip(
-                        u"数据格式错误：%s" % (message)
-                    )
+                    wx.CallAfter(self.window.show_tip, u"数据格式错误：%s" % (message))
             except Exception as e:
                 print(e)
-                self.window.show_tip(e)
+                wx.CallAfter(self.window.show_tip, str(e))
                 break
 
 

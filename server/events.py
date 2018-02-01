@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-20 14:59:10
 # @Last Modified time: 2018-01-25 18:41:23
-from .app import App
-
-
-app = App()
+from server import app
 
 
 @app.route("login")
