@@ -32,17 +32,28 @@ class StaticTextCtrl(wx.TextCtrl):
         self.set_bg_color(kwargs.get("parent"))
         self.set_size()
 
-    @staticmethod
-    def get_lines_number(record_value):
-        #: decode network transmitted ascii string to utf-8 string
-        lines_number = 0
-        for i in re.findall("[^\n]*\n", record_value.decode("utf-8")):
-            #: 1 == i.count(u"\n")
-            length = (len(i) + len(re.findall(CHINESE_REGEX, i)) +  (i.count(u"\t") * 3.0) - 1) * 1.0
-            line_number = math.ceil(length / RECORD_CHATS_PER_LINE)
+    @classmethod
+    def get_line_number(cls, s):
+        #: 1 == i.count(u"\n")
+        length = (len(s) + len(re.findall(CHINESE_REGEX, s)) +  s.count(u"\t") * 3.0 - 1) * 1.0
+        line_number = math.ceil(length / RECORD_CHATS_PER_LINE)
+        if not length % RECORD_CHATS_PER_LINE:
             line_number += 1
-            lines_number += line_number
-        return math.ceil(lines_number)
+        return line_number
+
+    @classmethod
+    def get_lines_number(cls, record_value):
+        #: decode network transmitted ascii string to utf-8 string
+        record_value = record_value.decode("utf-8")
+        #: wrapping utf-8 string by "\n"
+        wrapped_lines = re.findall(u"[^\n]*\n", record_value)
+        tail_string = re.search(u"[^\n]*$", record_value).group(0)
+        lines_number = 0
+        for i in wrapped_lines:
+            lines_number += cls.get_line_number(i)
+        if tail_string:
+            lines_number += cls.get_line_number(tail_string)
+        return lines_number
 
     def set_bg_color(self, parent):
         if parent:

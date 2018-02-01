@@ -8,16 +8,17 @@ import wx
 
 
 BUFFER_SIZE = 4096
-MAX_CHAT_RECORD_SIZE = 100
 COLOR_RED = wx.Colour(255, 0, 0)
 COLOR_BLUE = wx.Colour(30, 144, 255)
 COLOR_WHITE = wx.Colour(250, 250, 250)
 COLOR_GREEN = wx.Colour(0, 139, 69)
 CHINESE_REGEX = u"[\u4e00-\u9fa5]"
+MAX_CHAT_RECORD_SIZE = 100
 RECORD_CHATS_PER_LINE = 57
 
 
 def font(size):
+    # 1 Chinese == 2 English == 2 digit
     return wx.Font(
         pointSize=size,
         family=wx.SWISS,
