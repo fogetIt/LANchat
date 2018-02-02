@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-# @Date:   2018-01-23 15:26:09
-# @Last Modified time: 2018-01-23 15:26:21
-"""
-LANchat client core
-"""
+# @Date:   2018-02-02 15:16:27
+# @Last Modified time: 2018-02-02 15:16:39
 import wx
 
 
@@ -27,9 +24,7 @@ def font(size):
     )
 
 
-from .better import UniqueTuple
+from better import UniqueTuple
 NUMBER_ICONS = UniqueTuple(
     (u"⓿", u"➊", u"➋", u"➌", u"➍", u"➎", u"➏", u"➐", u"➑", u"➒", u"➓", u"∞")
 )
-
-from .controller import Controller

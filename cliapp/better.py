@@ -2,7 +2,7 @@
 # @Date:   2018-01-30 09:54:24
 # @Last Modified time: 2018-01-30 09:54:32
 import re, math, wx
-from LANchat import font, CHINESE_REGEX, RECORD_CHATS_PER_LINE
+from config import font, CHINESE_REGEX, RECORD_CHATS_PER_LINE
 
 
 class Single(object):

@@ -2,12 +2,10 @@
 # @Date:   2018-01-28 20:00:25
 # @Last Modified time: 2018-01-28 20:00:32
 import json, socket, wx
-from LANchat import (
-    COLOR_RED, COLOR_BLUE
-)
-from .better import StaticTextCtrl, Single
-from .models import RecordStore
-from .views import Views
+from config import COLOR_RED, COLOR_BLUE
+from better import StaticTextCtrl, Single
+from models import RecordStore
+from views import Views
 
 
 class Client(Single):

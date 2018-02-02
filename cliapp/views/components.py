@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 # @Last Modified time: 2018-01-24 21:21:12
-import wx
-import wx.lib.scrolledpanel as scrolled
-from LANchat import (
+from config import (
     wx, font, COLOR_BLUE, COLOR_RED, COLOR_WHITE, COLOR_GREEN
 )
-from ..better import Single
+import wx.lib.scrolledpanel as scrolled
+from better import Single
 
 
 class UserListBox(Single):

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Date:   2018-01-27 17:44:21
 # @Last Modified time: 2018-01-27 17:44:39
-from LANchat import MAX_CHAT_RECORD_SIZE, NUMBER_ICONS
-from .better import Single
+from config import MAX_CHAT_RECORD_SIZE, NUMBER_ICONS
+from better import Single
 
 
 class RecordStore(Single):

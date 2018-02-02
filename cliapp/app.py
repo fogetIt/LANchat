@@ -3,9 +3,9 @@
 # @Last Modified time: 2018-01-25 17:00:22
 import sys
 import json
-from functools import partial
 from threading import Thread
-from LANchat import wx, BUFFER_SIZE, Controller
+from config import wx, BUFFER_SIZE
+from controller import Controller
 
 
 reload(sys)
@@ -68,7 +68,7 @@ class REPL(Thread):
                 break
 
 
-def main(host=None, port=None):
+def main(host, port=None):
     t1 = GUI(host, port)
     t2 = REPL(t1)
     t1.start()
@@ -77,8 +77,5 @@ def main(host=None, port=None):
     t2.join()
 
 
-run = partial(main, port=8888)
-
-
 if __name__ == '__main__':
-    main(host="127.0.0.1", port=8888)
+    main("127.0.0.1", port=8888)

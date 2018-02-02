@@ -11,11 +11,11 @@ python server.py
 - include
     + [client/](./client)
     + [setup.py](./setup.py)
-    + [cliapp.py](./cliapp.py)
+    + [cliapp.py](cliapp/cliapp.py)
 - install
 ```bash
 sudo pip install git+https://github.com/fogetIt/LANchat.git
-# sudo ]pip uninstall LANchat
+# sudo pip uninstall LANchat
 ```
 - run
 ```python
