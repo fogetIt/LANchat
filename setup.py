@@ -19,7 +19,7 @@ elif platform.platform().lower().find("win") != -1:
 
 setup(
     name="cliapp",
-    version="0.0.1",
+    version="0.0.2",
     description="client for LANchat",
     url="https://github.com/forgetIt/LANchat.git",
     packages=["cliapp", "cliapp.views"],
