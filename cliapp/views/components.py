@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # @Last Modified time: 2018-01-24 21:21:12
-from config import (
+from cliapp.config import (
     wx, font, COLOR_BLUE, COLOR_RED, COLOR_WHITE, COLOR_GREEN
 )
 import wx.lib.scrolledpanel as scrolled
-from better import Single
+from cliapp.better import Single
 
 
 class UserListBox(Single):
