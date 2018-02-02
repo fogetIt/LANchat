@@ -15,7 +15,7 @@ python server.py
 - install
 ```bash
 sudo pip install git+https://github.com/fogetIt/LANchat.git
-# sudo pip uninstall LANchat
+# sudo pip uninstall cliapp
 ```
 - run
 ```python
